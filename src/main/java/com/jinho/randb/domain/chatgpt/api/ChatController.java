@@ -28,8 +28,10 @@ public class ChatController {
         String openAiResponse = openAiChatModel.call(message);
         responses.put("openai(chatGPT) 응답", openAiResponse);
 
+        /*
         String vertexAiGeminiResponse = vertexAiGeminiChatModel.call(message);
         responses.put("vertexai(gemini) 응답", vertexAiGeminiResponse);
+        */
         return responses;
     }
 }
