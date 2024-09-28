@@ -5,6 +5,7 @@ import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
 import com.jinho.randb.domain.post.dto.user.UserAddRequest;
+import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -58,4 +59,15 @@ public class PostController {
         postService.delete(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "게시글 삭제 성공"));
     }
+
+    /*
+    토론게시글 수정
+    */
+    public ResponseEntity<?> updatePost(@Valid UserUpdateRequest updatePostDto, @PathVariable("post-id") Long postId){
+        postService.update(postId, updatePostDto);
+
+        return ResponseEntity.ok(new ControllerApiResponse(true,"토론글 수정 성공"));
+
+    }
+
 }

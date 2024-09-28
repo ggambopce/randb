@@ -30,4 +30,10 @@ public class Post {
 
     private LocalDateTime updated_at;
 
+    public void update(String postTitle, String postContent){
+        this.postTitle = postTitle;
+        this.postContent = postContent;
+        this.updated_at = LocalDateTime.now().withNano(0).withSecond(0);
+    }
+
 }

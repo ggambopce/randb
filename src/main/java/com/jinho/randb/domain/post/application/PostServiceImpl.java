@@ -3,6 +3,7 @@ package com.jinho.randb.domain.post.application;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.user.UserAddRequest;
+import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,16 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을수 없습니다."));
         postRepository.deleteById(post.getId());
 
+    }
+
+    @Override
+    public void update(Long postId, UserUpdateRequest userUpdatePostDto) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
+
+        post.update(userUpdatePostDto.getPostTitle(), userUpdatePostDto.getPostContent());
+
+        postRepository.save(post);
+        
     }
 
 
