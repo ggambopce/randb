@@ -4,6 +4,7 @@ import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
 import com.jinho.randb.domain.post.dto.user.PostResponse;
 import com.jinho.randb.domain.post.dto.user.UserAddRequest;
+import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface PostService {
     List<Post> findAll();
 
     void delete(Long postId);
+
+    void update(Long postId, UserUpdateRequest userUpdatePostDto);
 
 
 
