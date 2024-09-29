@@ -59,7 +59,7 @@ public class PostServiceImpl implements PostService {
         post.update(userUpdatePostDto.getPostTitle(), userUpdatePostDto.getPostContent());
 
         postRepository.save(post);
-        
+
     }
 
 
