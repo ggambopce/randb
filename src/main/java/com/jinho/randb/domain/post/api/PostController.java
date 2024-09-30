@@ -38,7 +38,7 @@ public class PostController {
     토론게시글 목록조회
      */
     @GetMapping("/api/posts")
-    public ResponseEntity<?> findAllPost(@PathVariable("post-id") long id) {
+    public ResponseEntity<?> findAllPost() {
         List<Post> posts = postService.findAll();
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", posts));
     }
@@ -63,7 +63,8 @@ public class PostController {
     /*
     토론게시글 수정
     */
-    public ResponseEntity<?> updatePost(@Valid UserUpdateRequest updatePostDto, @PathVariable("post-id") Long postId){
+    @PostMapping("/api/user/update/posts/{post-id}")
+    public ResponseEntity<?> updatePost(@Valid @RequestBody UserUpdateRequest updatePostDto, @PathVariable("post-id") Long postId){
         postService.update(postId, updatePostDto);
 
         return ResponseEntity.ok(new ControllerApiResponse(true,"토론글 수정 성공"));
