@@ -27,7 +27,7 @@ public class PostController {
     토론게시글 등록
      */
     @PostMapping(value = "api/user/posts")
-    public ResponseEntity<?> postAdd(@Valid UserAddRequest userAddPostDto){
+    public ResponseEntity<?> postAdd(@Valid @RequestBody UserAddRequest userAddPostDto){
 
         postService.save(userAddPostDto);
 
@@ -37,7 +37,7 @@ public class PostController {
     /*
     토론게시글 목록조회
      */
-    @GetMapping("/api/user/posts/{post-id}")
+    @GetMapping("/api/posts")
     public ResponseEntity<?> findAllPost(@PathVariable("post-id") long id) {
         List<Post> posts = postService.findAll();
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", posts));
