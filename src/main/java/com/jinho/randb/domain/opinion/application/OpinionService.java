@@ -2,6 +2,7 @@ package com.jinho.randb.domain.opinion.application;
 
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
+import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +13,9 @@ public interface OpinionService {
 
     Optional<Opinion> findById(Long id);
 
-    List<Opinion> findAll();
+    List<Opinion> findByPostId(Long postId);
 
-    void deleteOpinion(Long OpinionId);
+    void delete(Long OpinionId);
 
-    void updateOpinion(Long opinionId, String opinionContent);
+    void update(Long opinionId, UserUpdateOpinionDto userUpdateOpinionDto);
 }
