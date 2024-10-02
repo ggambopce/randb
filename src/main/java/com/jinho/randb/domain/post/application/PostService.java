@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface PostService {
 
-    void save(UserAddRequest userAddRequest);
+    void save(UserAddRequest userAddPostDto);
 
     Optional<Post> findById(Long id);
 

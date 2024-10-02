@@ -26,7 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RestController
 @OpenAPIDefinition(tags = {
-        @Tag(name = "일반 사용자 토론글 컨트롤러", description = "일반 사용자 관련 토론글 작업")
+        @Tag(name = "일반 사용자 토론글 컨트롤러", description = "일반 사용자 토론글 관련 작업")
 })
 @Slf4j
 public class PostController {
