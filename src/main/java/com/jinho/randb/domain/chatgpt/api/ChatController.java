@@ -1,6 +1,6 @@
 package com.jinho.randb.domain.chatgpt.api;
 
-/*
+
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,4 +38,3 @@ public class ChatController {
     }
 
 }
-  */
