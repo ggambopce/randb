@@ -100,8 +100,4 @@ public class OpinionController {
 
         return ResponseEntity.ok(new ControllerApiResponse(true,"작성 성공"));
     }
-
-
-
-
 }
