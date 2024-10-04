@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static com.jinho.randb.domain.post.domain.QPost.post;
-
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -51,11 +49,17 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAll();
     }
 
+    /**
+     * 게시글의모든 데이터를 무한 페이징 최신순으로 내림차순
+     * @param pageable
+     * @return
+     */
     @Override
-    public PostResponse searchPostsByPostTitle(String postTitle, Long lastPostId, Pageable pageable) {
+    public PostResponse postPage(Long postId, Pageable pageable) {
 
-        Slice<PostDto> Post = postRepository.getPost(postTitle, lastPostId, pageable);
-        return new PostResponse(post.getPostContent(), post.hesNext());
+        Slice<PostDto> allPost = postRepository.getAllPost(postId, pageable);
+
+        return new PostResponse(allPost.hasNext(), allPost.getContent());
     }
 
     @Override
