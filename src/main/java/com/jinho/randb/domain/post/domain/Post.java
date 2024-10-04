@@ -26,14 +26,16 @@ public class Post {
     @Column(name = "post_content", length = 1000)
     private String postContent;
 
-    private LocalDateTime created_at;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     public void update(String postTitle, String postContent){
         this.postTitle = postTitle;
         this.postContent = postContent;
-        this.updated_at = LocalDateTime.now().withNano(0).withSecond(0);
+        this.updatedAt = LocalDateTime.now().withNano(0).withSecond(0);
     }
 
 }
