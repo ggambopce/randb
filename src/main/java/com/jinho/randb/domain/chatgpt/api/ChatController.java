@@ -1,17 +1,14 @@
 package com.jinho.randb.domain.chatgpt.api;
 
-
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RequestMapping("/api")
 @RestController
 public class ChatController {
     private final OpenAiChatModel openAiChatModel;
@@ -23,7 +20,7 @@ public class ChatController {
         //this.vertexAiGeminiChatModel = vertexAiGeminiChatModel;
     }
 
-    @GetMapping("/chat")
+    @GetMapping("api/chat")
     public Map<String, String> chat(@RequestBody String message) {
         Map<String, String> responses = new HashMap<>();
 
