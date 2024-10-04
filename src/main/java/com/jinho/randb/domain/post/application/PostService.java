@@ -14,6 +14,8 @@ public interface PostService {
 
     void save(UserAddRequest userAddPostDto);
 
+    PostResponse searchPostsByPostTitle(String postTitle, Long LastPostId, Pageable pageable);
+
     Optional<Post> findById(Long id);
 
     List<Post> findAll();

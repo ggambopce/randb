@@ -2,6 +2,7 @@ package com.jinho.randb.domain.post.api;
 
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.dto.user.PostResponse;
 import com.jinho.randb.domain.post.dto.user.UserAddRequest;
 import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
 import com.jinho.randb.global.payload.ControllerApiResponse;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +63,20 @@ public class PostController {
         List<Post> posts = postService.findAll();
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", posts));
     }
+
+    @Operation(summary = "토론글 검색 API(무한 스크롤 방식)", description = "조회된 마지막 토론글의 Id값을 통해 다음페이지 여부를 판단 ('lastId'는 조회된 마지막 페이지 작성 값을 넣지않고 보내면 첫번째의 데이터만 출력 , page에 대한 쿼리스트링 작동 x", tags = {"일반 사용자 토론글 컨트롤러"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = Post.class),
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
+    })
+    @GetMapping("/api/search/posts")
+    public ResponseEntity<?> findPost(@RequestParam("PostTitle") String postTitle,  @RequestParam(value = "lastId",required = false)Long lastPostId, Pageable pageable) {
+        PostResponse postResponse = postService.searchPostsByPostTitle(postTitle, lastPostId, pageable);
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
+    }
+
+
 
     @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
