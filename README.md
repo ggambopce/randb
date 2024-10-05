@@ -1,5 +1,5 @@
 # 🌗 RED & BLUE
-<img width="1875" alt="스크린샷 2024-07-18 오후 3 03 12" src="https://github.com/user-attachments/assets/e9f510e5-db02-4858-9742-de17f3209728">
+<img width="1875" alt="스크린샷 2024-07-18 오후 3 03 12" src="">
 <br/>
 
 ## 📮 관련 링크 주소
