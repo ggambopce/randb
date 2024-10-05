@@ -63,7 +63,9 @@
 
 ## 💾 ERD
 <img alt=".png" src="https://github.com/user-attachments/assets/6af381fd-0263-490e-91dc-826d224cab8a" width="700"/>
-## 💾 API 명세서
+<br>
+
+## 📋 API 명세서
 <img alt=".png" src="https://github.com/user-attachments/assets/ffe119dd-a61d-49a2-b7d6-23124f686d2e" width="700"/>
 
 ## 🎯 트러블 슈팅
