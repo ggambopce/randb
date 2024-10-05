@@ -5,8 +5,8 @@
 ## 📮 관련 링크 주소
 > 유튜브 : [프로젝트소개 바로가기]()<br>
 > API 명세서 : [Swagger 바로가기]()<br>
-> 레시피 공유소 노션 : [노션 바로가기]()<br>
-> ERD : [ERD 바로가기]()<br>
+> RED&BLUE  노션 : [노션 바로가기](https://buttered-uranium-6ec.notion.site/Red-Blue-4f5bc894cd674fce88a16989a82602cc?pvs=4)<br>
+> ERD : [ERD 바로가기](https://www.erdcloud.com/d/jst555grtscNgvhSg)<br>
 
 ## 📽️ 프로젝트 간략소개
 
