@@ -4,9 +4,7 @@
 
 ## 📮 관련 링크 주소
 > 유튜브 : [프로젝트소개 바로가기]()<br>
-> API 명세서 : [Swagger 바로가기]()<br>
 > RED&BLUE  노션 : [노션 바로가기](https://buttered-uranium-6ec.notion.site/Red-Blue-4f5bc894cd674fce88a16989a82602cc?pvs=4)<br>
-> ERD : [ERD 바로가기](https://www.erdcloud.com/d/jst555grtscNgvhSg)<br>
 
 ## 📽️ 프로젝트 간략소개
 
@@ -64,8 +62,9 @@
 
 
 ## 💾 ERD
-<img alt=".png" src="" width="700"/>
-
+<img alt=".png" src="https://github.com/user-attachments/assets/6af381fd-0263-490e-91dc-826d224cab8a" width="700"/>
+## 💾 API 명세서
+<img alt=".png" src="https://github.com/user-attachments/assets/ffe119dd-a61d-49a2-b7d6-23124f686d2e" width="700"/>
 
 ## 🎯 트러블 슈팅
 > - [Open AI 키 발급 문제]()<br>
