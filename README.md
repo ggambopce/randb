@@ -1,5 +1,5 @@
 # 🌗 RED & BLUE
-<img width="1875" alt="RED & BLUE" src="">
+<img width="700" alt="RED & BLUE" src="![RandB](https://github.com/user-attachments/assets/cb548ab8-a951-4aa8-9c8e-3474b76b047e)">
 <br/>
 
 ## 📮 관련 링크 주소
