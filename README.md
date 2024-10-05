@@ -1,5 +1,5 @@
 # 🌗 RED & BLUE
-<img width="1875" alt="스크린샷 2024-07-18 오후 3 03 12" src="">
+<img width="1875" alt="RED & BLUE" src="">
 <br/>
 
 ## 📮 관련 링크 주소
