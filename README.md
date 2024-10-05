@@ -1,4 +1,4 @@
-# 🌗 RED & BLUE
+# 🌗 RED & BLUE 스프링에 ChatGPT API 사용하기 
 <img width="700" alt="RED & BLUE" src="https://github.com/user-attachments/assets/cb548ab8-a951-4aa8-9c8e-3474b76b047e">
 <br/>
 
