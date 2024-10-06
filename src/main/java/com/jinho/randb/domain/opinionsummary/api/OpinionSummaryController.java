@@ -63,11 +63,11 @@ public class OpinionSummaryController {
                 .collect(Collectors.toList());
 
         // RED 의견 요약
-        String redPrompt = "다음은 RED 입장의 의견 목록입니다. 비속어나 비방하는 것을 제외하고 논리정연하게 이 의견들을 요약하여 한 문단으로 만들어 주세요:\n" + String.join("\n", redOpinions);
+        String redPrompt = "다음은 RED 입장의 의견 목록입니다. 비속어나 비방하는 부분은 제외하고 논리정연하게 이 의견들을 요약하여 하나의 논설문으로 만들어 주세요:\n" + String.join("\n", redOpinions);
         String redSummary = openAiChatModel.call(redPrompt);
 
         // BLUE 의견 요약
-        String bluePrompt = "다음은 BLUE 입장의 의견 목록입니다. 비속어나 비방하는 것을 제외하고 논리정연하게 이 의견들을 요약하여 한 문단으로 만들어 주세요:\n" + String.join("\n", blueOpinions);
+        String bluePrompt = "다음은 BLUE 입장의 의견 목록입니다. 비속어나 비방하는 부분은 제외하고 논리정연하게 이 의견들을 요약하여 하나의 논설문으로 만들어 주세요:\n" + String.join("\n", blueOpinions);
         String blueSummary = openAiChatModel.call(bluePrompt);
 
         // 응답 생성
