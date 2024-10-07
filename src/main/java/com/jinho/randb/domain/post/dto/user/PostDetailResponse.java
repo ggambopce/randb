@@ -6,10 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class PostDetailResponse {
 
     private PostDto post;
 
+    public PostDetailResponse(PostDto postDto) {
+        this.post = postDto;
+    }
+
+    public  PostDetailResponse of(PostDto postDto){
+        return new PostDetailResponse(postDto);
+    }
 }
