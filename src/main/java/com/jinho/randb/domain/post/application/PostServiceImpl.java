@@ -3,6 +3,7 @@ package com.jinho.randb.domain.post.application;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
+import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
 import com.jinho.randb.domain.post.dto.user.PostResponse;
 import com.jinho.randb.domain.post.dto.user.UserAddRequest;
 import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
@@ -42,6 +43,17 @@ public class PostServiceImpl implements PostService {
     @Override
     public Optional<Post> findById(Long id) {
         return postRepository.findById(id);
+    }
+
+    /**
+     * 레시피의 상세정보를 보는 로직,
+     * @param postId  찾을 토론글 번호
+     * @return      Response로 변환해 해당 토론글의 상세 정보를 반환
+     */
+    @Override
+    public PostDetailResponse getPostDetail(Long postId) {
+        PostDto postDetail = postRepository.getPostDetail(postId);
+        return PostDetailResponse.of(postDetail.toDto());
     }
 
     @Override

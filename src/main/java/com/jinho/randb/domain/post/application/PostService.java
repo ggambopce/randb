@@ -18,6 +18,8 @@ public interface PostService {
 
     Optional<Post> findById(Long id);
 
+    PostDetailResponse getPostDetail(Long postId);
+
     List<Post> findAll();
 
     void delete(Long postId);

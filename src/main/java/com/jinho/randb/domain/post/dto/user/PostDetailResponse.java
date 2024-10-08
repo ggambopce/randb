@@ -15,7 +15,7 @@ public class PostDetailResponse {
         this.post = postDto;
     }
 
-    public  PostDetailResponse of(PostDto postDto){
+    public static PostDetailResponse of(PostDto postDto){
         return new PostDetailResponse(postDto);
     }
 }

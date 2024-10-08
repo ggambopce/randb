@@ -2,6 +2,7 @@ package com.jinho.randb.domain.post.api;
 
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
 import com.jinho.randb.domain.post.dto.user.PostResponse;
 import com.jinho.randb.domain.post.dto.user.UserAddRequest;
 import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
@@ -91,6 +92,21 @@ public class PostController {
     public ResponseEntity<?> findPost(@PathVariable("post-id") long id) {
         Optional<Post> post = postService.findById(id);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", post));
+    }
+
+    @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = Post.class),
+                            examples = @ExampleObject(value = "{\"success\":true,\"message\":\"조회성공\",\"data\":{\"post\":{\"id\":3,\"postTitle\":\"토론 주제\",\"postContent\":\"토론 내용입니다!\"}}}"))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                            examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
+    })
+    @GetMapping("/api/user/detail/posts/{post-id}")
+    public ResponseEntity<?> getdetail(@PathVariable("post-id") Long postId) {
+        PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postDetailResponse));
     }
 
     @Operation(summary = "토론글 삭제 API",description = "삭제시 해당 게시물과 관련된 데이터는 모두 삭제",tags = {"일반 사용자 토론글 컨트롤러"})

@@ -1,9 +1,11 @@
 package com.jinho.randb.domain.post.dao;
 
 
+import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.domain.QPost;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,12 +17,34 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.jinho.randb.domain.post.domain.QPost.post;
+
 @Slf4j
 @Repository
 @RequiredArgsConstructor
 public class CustomPostRepositoryImpl implements CustomPostRepository {
     
     private final JPAQueryFactory jpaQueryFactory;
+
+    /**
+     * 해당 id 토론글 데이터를 가져와서 RecipeDto로 변환
+     * @param postId
+     * @return postDTO
+     */
+    @Override
+    public PostDto getPostDetail(Long postId) {
+
+        List<Tuple> postDetail = jpaQueryFactory
+                .select(post.id, post.postTitle, post.postContent)
+                .from(post)
+                .where(post.id.eq(postId))
+                .fetch();
+
+        Post postEntity = postDetail.stream().map(tuple -> tuple.get(post)).collect(Collectors.toList()).stream().findFirst().get();
+
+        return PostDto.of(postEntity);
+
+    }
 
     /**
      * 게시글을 페이지네이션 방식으로 페이징 처리 (no-offset 방식 사용)
