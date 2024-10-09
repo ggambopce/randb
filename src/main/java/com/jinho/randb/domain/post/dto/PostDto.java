@@ -25,7 +25,7 @@ public class PostDto {
     public PostDto toDto() {
         return new PostDto(id, postTitle, postContent);
     }
-
+    // 정적 팩토리 메서드
     public static PostDto from(Long id, String postTitle, String postContent){
         return new PostDto(id, postTitle, postContent);
     }

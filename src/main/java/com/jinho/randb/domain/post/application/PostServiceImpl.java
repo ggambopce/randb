@@ -3,10 +3,7 @@ package com.jinho.randb.domain.post.application;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
-import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
-import com.jinho.randb.domain.post.dto.user.PostResponse;
-import com.jinho.randb.domain.post.dto.user.UserAddRequest;
-import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +27,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void save(UserAddRequest userAddRequest) {
 
+        // DTO -> domain 변환
         Post post = Post.builder()
                 .postTitle(userAddRequest.getPostTitle())
                 .postContent(userAddRequest.getPostContent())
@@ -59,6 +57,13 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> findAll() {
         return postRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MainPagePostResponse mainPagePost() {
+        List<PostDto> postDtoList = postRepository.mainPagePost();
+        return MainPagePostResponse.of(postDtoList);
     }
 
     /**

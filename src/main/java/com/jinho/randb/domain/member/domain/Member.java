@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -27,18 +28,16 @@ public class Member {
     @Column(unique = true)
     String email;
 
-    @Column(unique = true)
-    String nickName;
-
     String password;
+
+    @Enumerated(EnumType.STRING)
+    private MemberRole roles;
 
     private boolean emailVerified;
 
     private String emailCheckToken;
 
     LocalDate joined_at;
-
-
 
     @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,orphanRemoval = true)

@@ -80,6 +80,16 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         return new SliceImpl<>(result, pageable, hasNext);
     }
 
+    @Override
+    public List<PostDto> mainPagePost() {
+
+        //튜플로 토론글 id, 제목, 내용을 조회
+        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent)
+                .from(post)
+                .fetch();
+        return list.stream().map(tuple -> PostDto.from(tuple.get(post.id),tuple.get(post.postTitle),tuple.get(post.postContent))).collect(Collectors.toList());
+    } //from은 정적 팩토리 메서드로 new 키워드를 사용하는 것과는 다른 방식. 팩토리 메서드는 new 없이 호출
+
 
     private static boolean isHasNextSize(Pageable pageable, List<PostDto> collect) {
         boolean hasNextSize = false;

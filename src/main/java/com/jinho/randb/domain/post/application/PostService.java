@@ -1,10 +1,7 @@
 package com.jinho.randb.domain.post.application;
 
 import com.jinho.randb.domain.post.domain.Post;
-import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
-import com.jinho.randb.domain.post.dto.user.PostResponse;
-import com.jinho.randb.domain.post.dto.user.UserAddRequest;
-import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.user.*;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -21,6 +18,8 @@ public interface PostService {
     PostDetailResponse getPostDetail(Long postId);
 
     List<Post> findAll();
+
+    MainPagePostResponse mainPagePost();
 
     void delete(Long postId);
 

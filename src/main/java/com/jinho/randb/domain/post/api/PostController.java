@@ -2,10 +2,7 @@ package com.jinho.randb.domain.post.api;
 
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
-import com.jinho.randb.domain.post.dto.user.PostDetailResponse;
-import com.jinho.randb.domain.post.dto.user.PostResponse;
-import com.jinho.randb.domain.post.dto.user.UserAddRequest;
-import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -63,6 +60,18 @@ public class PostController {
     public ResponseEntity<?> findAllPost() {
         List<Post> posts = postService.findAll();
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", posts));
+    }
+
+    @Operation(summary = "메인페이지 전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = Post.class),
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
+    })
+    @GetMapping("/api/main/posts")
+    public ResponseEntity<?> mainPagePost() {
+        MainPagePostResponse mainPagePostResponse = postService.mainPagePost();
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", mainPagePostResponse));
     }
 
     @Operation(summary = "토론글 검색 API(페이지네이션)", description = "모든 사용자가 해당 게시글의 페이지를 볼 수 있음", tags = {"일반 사용자 토론글 컨트롤러"})
