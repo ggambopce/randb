@@ -50,16 +50,16 @@ public class PostController {
         return ResponseEntity.ok(new ControllerApiResponse(true, "작성 성공"));
     }
 
-    @Operation(summary = "전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
+    @Operation(summary = "전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.(페이지네이션)", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = Post.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
     })
     @GetMapping("/api/posts")
-    public ResponseEntity<?> findAllPost() {
-        List<Post> posts = postService.findAll();
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", posts));
+    public ResponseEntity<?> findAllPost(Long postId, Pageable pageable) {
+        PostResponse postResponse = postService.postPage(postId, pageable);
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
     }
 
     @Operation(summary = "메인페이지 전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
@@ -73,19 +73,6 @@ public class PostController {
         MainPagePostResponse mainPagePostResponse = postService.mainPagePost();
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", mainPagePostResponse));
     }
-
-    @Operation(summary = "토론글 검색 API(페이지네이션)", description = "모든 사용자가 해당 게시글의 페이지를 볼 수 있음", tags = {"일반 사용자 토론글 컨트롤러"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = Post.class),
-                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
-    })
-    @GetMapping("/api/search/posts")
-    public ResponseEntity<?> findAllPosts(@RequestParam(value = "post-id", required = false) Long postId, Pageable pageable) {
-        PostResponse postResponse = postService.postPage(postId, pageable);
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
-    }
-
 
 
     @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})

@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class PostResponse {
 
     private Boolean nextPage;
+    private List<PostDto> posts;
 
-    private List<PostDto> postDtoList;
-
-
+    public PostResponse(boolean nextPage, List<PostDto> posts) {
+        this.nextPage = nextPage;
+        this.posts = posts;
+    }
 }

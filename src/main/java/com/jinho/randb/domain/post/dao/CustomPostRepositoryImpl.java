@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.jinho.randb.domain.post.domain.QPost.post;
+import static com.jinho.randb.domain.post.domain.QPost.*;
 
 @Slf4j
 @Repository
@@ -54,7 +54,6 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
      */
     @Override
     public Slice<PostDto> getAllPost(Long postId, Pageable pageable) {
-        QPost post = QPost.post;
 
         // 동적 쿼리: postId가 주어졌다면 해당 ID 이후의 게시글을 조회하는 조건
         BooleanBuilder builder = new BooleanBuilder();
@@ -63,21 +62,21 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         }
 
         // QueryDSL을 사용하여 동적 쿼리 실행 및 페이징 처리
-        List<PostDto> result = jpaQueryFactory
-                .selectFrom(post)
-                .where(builder)
-                .orderBy(post.id.asc()) // 게시글 ID를 기준으로 오름차순 정렬
-                .limit(pageable.getPageSize() + 1) // 다음 페이지가 있는지 판단하기 위해 페이지 크기 + 1만큼 조회
-                .fetch()
-                .stream()
-                .map(p -> new PostDto(p.getId(), p.getPostTitle(), p.getPostContent()))
-                .collect(Collectors.toList());
+        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.createdAt)
+                .from(post)
+                .orderBy(post.createdAt.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        // Tuple 데이터를 PostDto로 변환
+        List<PostDto> collect = list.stream()
+                .map(tuple -> new PostDto(tuple.get(post.id),tuple.get(post.postTitle),tuple.get(post.postContent))).collect(Collectors.toList());
 
         // 다음 페이지가 있는지 확인
-        boolean hasNext = isHasNextSize(pageable, result);
+        boolean hasNext = isHasNextSize(pageable, collect);
 
         // SliceImpl을 반환하여 페이징 처리된 결과를 클라이언트에 제공
-        return new SliceImpl<>(result, pageable, hasNext);
+        return new SliceImpl<>(collect, pageable, hasNext);
     }
 
     @Override
@@ -87,7 +86,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent)
                 .from(post)
                 .fetch();
-        return list.stream().map(tuple -> PostDto.from(tuple.get(post.id),tuple.get(post.postTitle),tuple.get(post.postContent))).collect(Collectors.toList());
+        return list.stream().map(tuple -> PostDto.from(tuple.get(post.id),
+                tuple.get(post.postTitle),
+                tuple.get(post.postContent))).collect(Collectors.toList());
     } //from은 정적 팩토리 메서드로 new 키워드를 사용하는 것과는 다른 방식. 팩토리 메서드는 new 없이 호출
 
 

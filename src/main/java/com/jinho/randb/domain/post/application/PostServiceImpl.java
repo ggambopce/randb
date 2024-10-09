@@ -60,24 +60,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostResponse postPage(Pageable pageable) {
+
+        Slice<PostDto> allPost = postRepository.getAllPost(pageable);
+
+        return new PostResponse(allPost.hasNext(),allPost.getContent());
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public MainPagePostResponse mainPagePost() {
         List<PostDto> postDtoList = postRepository.mainPagePost();
         return MainPagePostResponse.of(postDtoList);
     }
 
-    /**
-     * 게시글의모든 데이터를 무한 페이징 최신순으로 내림차순
-     * @param pageable
-     * @return
-     */
-    @Override
-    public PostResponse postPage(Long postId, Pageable pageable) {
-
-        Slice<PostDto> allPost = postRepository.getAllPost(postId, pageable);
-
-        return new PostResponse(allPost.hasNext(), allPost.getContent());
-    }
 
     @Override
     public void delete(Long postId) {

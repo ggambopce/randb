@@ -33,4 +33,7 @@ public class PostDto {
     public static PostDto of(Post post){
         return new PostDto(post.getId(), post.getPostTitle(), post.getPostContent());
     }
+
+
+
 }
