@@ -60,9 +60,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse postPage(Pageable pageable) {
+    public PostResponse postPage(Long postId, Pageable pageable) {
 
-        Slice<PostDto> allPost = postRepository.getAllPost(pageable);
+        Slice<PostDto> allPost = postRepository.getAllPost(postId, pageable);
 
         return new PostResponse(allPost.hasNext(),allPost.getContent());
     }

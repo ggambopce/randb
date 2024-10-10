@@ -56,6 +56,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     public Slice<PostDto> getAllPost(Long postId, Pageable pageable) {
 
         // 동적 쿼리: postId가 주어졌다면 해당 ID 이후의 게시글을 조회하는 조건
+        // BooleanBuilder는 동적 쿼리 조건을 쌓는 데 사용
         BooleanBuilder builder = new BooleanBuilder();
         if (postId != null) {
             builder.and(post.id.gt(postId)); // postId 이후의 게시글을 조회
@@ -68,7 +69,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
-        // Tuple 데이터를 PostDto로 변환
+        // Tuple 데이터를 PostDto로 변환하여 리스트로 수집
         List<PostDto> collect = list.stream()
                 .map(tuple -> new PostDto(tuple.get(post.id),tuple.get(post.postTitle),tuple.get(post.postContent))).collect(Collectors.toList());
 
@@ -76,6 +77,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         boolean hasNext = isHasNextSize(pageable, collect);
 
         // SliceImpl을 반환하여 페이징 처리된 결과를 클라이언트에 제공
+        // Slice는 Page와 달리 전체 데이터 개수를 신경 쓰지 않고, 단순히 다음 페이지가 있는지만 확인
         return new SliceImpl<>(collect, pageable, hasNext);
     }
 
