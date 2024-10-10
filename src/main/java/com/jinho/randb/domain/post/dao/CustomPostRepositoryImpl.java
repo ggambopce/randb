@@ -34,15 +34,15 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     @Override
     public PostDto getPostDetail(Long postId) {
 
-        List<Tuple> postDetail = jpaQueryFactory
-                .select(post.id, post.postTitle, post.postContent)
-                .from(post)
+        Post postDetail = jpaQueryFactory
+                .selectFrom(post)
                 .where(post.id.eq(postId))
-                .fetch();
+                .fetchOne();
 
-        Post postEntity = postDetail.stream().map(tuple -> tuple.get(post)).collect(Collectors.toList()).stream().findFirst().get();
-
-        return PostDto.of(postEntity);
+        if (postDetail == null) {
+            throw new RuntimeException("Post not found for id: " + postId);
+        }
+        return PostDto.of(postDetail);
 
     }
 

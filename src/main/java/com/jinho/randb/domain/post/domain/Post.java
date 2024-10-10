@@ -26,10 +26,6 @@ public class Post {
     @Column(name = "post_content", length = 1000)
     private String postContent;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")  // 외래키 설정
-    private Member member;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

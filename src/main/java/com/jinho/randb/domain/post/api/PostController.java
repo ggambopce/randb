@@ -100,7 +100,7 @@ public class PostController {
                             examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
     })
     @GetMapping("/api/user/detail/posts/{post-id}")
-    public ResponseEntity<?> getdetail(@PathVariable("post-id") Long postId) {
+    public ResponseEntity<?> getdetail(@PathVariable("post-id") long postId) {
         PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postDetailResponse));
     }
