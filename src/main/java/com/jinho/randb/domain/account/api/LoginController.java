@@ -1,4 +1,4 @@
-package com.jinho.randb.global.security.api;
+package com.jinho.randb.domain.account.api;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,5 +10,11 @@ public class LoginController {
     public String login() {
 
         return "login/login";
+    }
+
+    @GetMapping(value = "/signup")
+    public String signup() {
+
+        return "login/signup";
     }
 }
