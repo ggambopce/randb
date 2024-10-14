@@ -1,11 +1,13 @@
 package com.jinho.randb.domain.account.dto;
 
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
+@Data
 public class AccountContext implements UserDetails {
 
     private final AccountDto accountDto;
