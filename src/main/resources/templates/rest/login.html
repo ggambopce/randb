@@ -85,7 +85,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         function login() {
-            const username = document.getElementById('username').value;
+            const userName = document.getElementById('userName').value;
             const password = document.getElementById('password').value;
 
             fetch('http://localhost:8080/api/login', {
@@ -94,7 +94,7 @@
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ userName, password }),
             })
                 .then(response => {
                     if(response.ok){
@@ -122,8 +122,8 @@
                     <span th:text="${exception} ?: '잘못된 아이디나 암호입니다'" class="alert alert-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" class="form-control" id="username" required>
+                    <label for="userName">Username</label>
+                    <input type="text" class="form-control" id="userName" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>

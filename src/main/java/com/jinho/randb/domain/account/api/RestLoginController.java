@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestLoginController {
     @PostMapping("/api/login")
     public String restLogin(){
-        return "restLogin";
+        return "rest/login";
     }
 
 
