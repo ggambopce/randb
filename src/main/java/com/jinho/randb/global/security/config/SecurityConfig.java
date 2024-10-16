@@ -1,7 +1,7 @@
 package com.jinho.randb.global.security.config;
 
-import com.jinho.randb.global.security.filter.RestAutenticationFilter;
-import com.jinho.randb.global.security.handler.FormAccessDeniedHandler;
+import com.jinho.randb.global.security.filter.RestAuthenticationFilter;
+import com.jinho.randb.global.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +26,12 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
-    private final AuthenticationSuccessHandler successHandler;
-    private final AuthenticationFailureHandler failureHandler;
+    private final AuthenticationProvider restAuthenticationProvider;
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
+    private final FormAuthenticationSuccessHandler successHandler;
+    private final FormAuthenticationFailureHandler failureHandler;
+    private final RestAuthenticationSuccessHandler restSuccessHandler;
+    private final RestAuthenticationFailureHandler restFailureHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,28 +68,31 @@ public class SecurityConfig {
     public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         http
-                .securityMatcher("api/**")
+                .securityMatcher("api/login")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
                         .anyRequest().permitAll())
 
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(restAuthenticaionFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(restAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
         ;
 
         return http.build();
     }
 
-    private RestAutenticationFilter restAuthenticaionFilter(AuthenticationManager authenticationManager) {
+    private RestAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
 
-        RestAutenticationFilter restAutenticationFilter = new RestAutenticationFilter();
-        restAutenticationFilter.setAuthenticationManager(authenticationManager);
+        RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter();
+        restAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        restAuthenticationFilter.setAuthenticationSuccessHandler(restSuccessHandler);
+        restAuthenticationFilter.setAuthenticationFailureHandler(restFailureHandler);
 
-        return restAutenticationFilter;
+        return restAuthenticationFilter;
     }
 
 

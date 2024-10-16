@@ -17,11 +17,11 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-public class RestAutenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public RestAutenticationFilter() {
+    public RestAuthenticationFilter() {
         super(new AntPathRequestMatcher("/api/login", "POST"));
     }
 
