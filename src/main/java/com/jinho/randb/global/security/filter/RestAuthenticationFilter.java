@@ -33,11 +33,11 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
         }
 
         AccountDto accountDto = objectMapper.readValue(request.getReader(), AccountDto.class);
-        if(StringUtils.hasText(accountDto.getUserName()) || !StringUtils.hasText(accountDto.getPassword())){
+        if(StringUtils.hasText(accountDto.getUsername()) || !StringUtils.hasText(accountDto.getPassword())){
             throw new AuthenticationServiceException("Username or Password is not provided");
         }
 
-        RestAuthenticationToken authenticationToken = new RestAuthenticationToken(accountDto.getUserName(), accountDto.getPassword());
+        RestAuthenticationToken authenticationToken = new RestAuthenticationToken(accountDto.getUsername(), accountDto.getPassword());
 
         return getAuthenticationManager().authenticate(authenticationToken);
     }

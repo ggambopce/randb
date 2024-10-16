@@ -1,17 +1,13 @@
 package com.jinho.randb.global.security.provider;
 
 import com.jinho.randb.domain.account.dto.AccountContext;
-import com.jinho.randb.global.security.details.FormAuthenticationDetails;
-import com.jinho.randb.global.security.exception.SecretException;
 import com.jinho.randb.global.security.token.RestAuthenticationToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

@@ -48,7 +48,7 @@ public class SecurityConfig {
 
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .usernameParameter("userName")
+                        .usernameParameter("username")
                         .passwordParameter("password")
                         .authenticationDetailsSource(authenticationDetailsSource)
                         .successHandler(successHandler)
@@ -69,19 +69,17 @@ public class SecurityConfig {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
-        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();            // build() 는 최초 한번 만 호출해야 한다
 
         http
-                .securityMatcher("api/login")
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
                         .anyRequest().permitAll())
-
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(restAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
         ;
-
         return http.build();
     }
 
@@ -94,6 +92,4 @@ public class SecurityConfig {
 
         return restAuthenticationFilter;
     }
-
-
 }

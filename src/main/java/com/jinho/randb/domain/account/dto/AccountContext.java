@@ -30,7 +30,7 @@ public class AccountContext implements UserDetails {
 
     @Override
     public String getUsername() {
-        return accountDto.getUserName();
+        return accountDto.getUsername();
     }
 
     @Override

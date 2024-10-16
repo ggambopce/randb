@@ -85,7 +85,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
         function login() {
-            const userName = document.getElementById('userName').value;
+            const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
             fetch('http://localhost:8080/api/login', {
@@ -94,7 +94,7 @@
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify({ userName, password }),
+                body: JSON.stringify({ username, password }),
             })
                 .then(response => {
                     response.json().then(function (data) {
@@ -117,13 +117,13 @@
         </div>
         <div class="col-md-10 content">
             <div class="login-form">
-                <h2>Login</h2>
+                <h2>RestLogin</h2>
                 <div th:if="${param.error}" class="form-group">
                     <span th:text="${exception} ?: '잘못된 아이디나 암호입니다'" class="alert alert-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label for="userName">Username</label>
-                    <input type="text" class="form-control" id="userName" required>
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>

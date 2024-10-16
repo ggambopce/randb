@@ -22,7 +22,7 @@ public class AccountServiceImpl implements AccountService{
     public void signup(AccountDto accountDto) {
 
         Account account = Account.builder()
-                .userName(accountDto.getUserName())
+                .username(accountDto.getUsername())
                 .password(passwordEncoder.encode(accountDto.getPassword()))
                 .roles(accountDto.getRoles())
                 .build();
