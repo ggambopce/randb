@@ -27,7 +27,7 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 
         AccountContext accountContext = (AccountContext) userDetailsService.loadUserByUsername(loginId);
 
-        if(passwordEncoder.matches(password, accountContext.getPassword())){
+        if(!passwordEncoder.matches(password, accountContext.getPassword())){
             throw new BadCredentialsException("Invalid password");
         }
         String secretKey = ((FormAuthenticationDetails) authentication.getDetails()).getSecretKey();

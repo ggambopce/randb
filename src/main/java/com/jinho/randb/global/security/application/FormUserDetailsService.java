@@ -21,11 +21,11 @@ public class FormUserDetailsService implements UserDetailsService {
     private final AccountRepository accountRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-        Account account = accountRepository.findByUserName(username);
+        Account account = accountRepository.findByUserName(userName);
         if(account == null){
-            throw new UsernameNotFoundException("No user found with username" + username);
+            throw new UsernameNotFoundException("No user found with username" + userName);
         }
 
         AccountDto accountDto = AccountDto.builder()

@@ -15,7 +15,6 @@ public class FormAccessDeniedHandler implements AccessDeniedHandler {
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
     private final String errorPage;
 
-
     public FormAccessDeniedHandler(String errorPage) {
         this.errorPage = errorPage;
     }
