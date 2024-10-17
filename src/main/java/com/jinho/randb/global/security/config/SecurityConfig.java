@@ -1,5 +1,6 @@
 package com.jinho.randb.global.security.config;
 
+import com.jinho.randb.global.security.entrypoint.RestAuthenticationEntryPoint;
 import com.jinho.randb.global.security.filter.RestAuthenticationFilter;
 import com.jinho.randb.global.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,9 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -79,6 +83,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
+                .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .accessDeniedHandler(new RestAccessDeniedHandler())
+                )
         ;
         return http.build();
     }
@@ -89,8 +97,8 @@ public class SecurityConfig {
         restAuthenticationFilter.setAuthenticationManager(authenticationManager);
         restAuthenticationFilter.setAuthenticationSuccessHandler(restSuccessHandler);
         restAuthenticationFilter.setAuthenticationFailureHandler(restFailureHandler);
-//        restAuthenticationFilter.setSecurityContextRepository(new DelegatingSecurityContextRepository(
-//                new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository()));
+        restAuthenticationFilter.setSecurityContextRepository(new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository()));
 
         return restAuthenticationFilter;
     }
