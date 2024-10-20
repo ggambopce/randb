@@ -163,7 +163,7 @@ public class PostController {
             if (errorMap != null) return errorMap;
 
             String username = authenticationLogin();
-            postService.update(postId, updatePostDto);
+            postService.update(postId, updatePostDto, username);
 
             return ResponseEntity.ok(new ControllerApiResponse(true, "토론글 수정 성공"));
         }catch (NoSuchElementException e){

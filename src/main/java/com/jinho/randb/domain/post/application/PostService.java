@@ -23,7 +23,7 @@ public interface PostService {
 
     void delete(String username, Long postId);
 
-    void update(Long postId, UserUpdateRequest userUpdatePostDto);
+    void update(Long postId, UserUpdateRequest userUpdatePostDto, String username);
 
 
 
