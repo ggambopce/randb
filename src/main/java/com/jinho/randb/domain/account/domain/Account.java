@@ -1,10 +1,15 @@
 package com.jinho.randb.domain.account.domain;
 
+import com.jinho.randb.domain.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,6 +29,12 @@ public class Account {
     private String password;
 
     private String roles;
+
+    LocalDate join_date;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,orphanRemoval = true)
+    List<Post> posts = new ArrayList<>();
 
 
 }

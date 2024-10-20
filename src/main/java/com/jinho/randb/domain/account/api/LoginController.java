@@ -23,11 +23,6 @@ public class LoginController {
         return "login/login";
     }
 
-    @GetMapping(value="/api/login")
-    public String restlogin(){
-        return "rest/login";
-    }
-
     @GetMapping(value = "/signup")
     public String signup() {
 
@@ -50,5 +45,10 @@ public class LoginController {
         model.addAttribute("exception", exception);
 
         return "login/denied";
+    }
+
+    @GetMapping(value="/api/login")
+    public String restlogin(){
+        return "rest/login";
     }
 }
