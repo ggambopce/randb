@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -32,9 +33,16 @@ public class Account {
 
     LocalDate join_date;
 
+    private boolean verified;
+
     @Builder.Default
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true)
     List<Post> posts = new ArrayList<>();
 
-
+    public List<String> getRoleList() {
+        if (this.roles != null && this.roles.length() > 0) {
+            return Arrays.asList(this.roles.split(","));
+        }
+        return new ArrayList<>();
+    }
 }
