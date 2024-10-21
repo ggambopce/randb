@@ -6,7 +6,7 @@ import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
 import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
 import com.jinho.randb.domain.opinion.exception.OpinionException;
 import com.jinho.randb.domain.post.domain.Post;
-import com.jinho.randb.domain.post.dto.user.UserAddRequest;
+import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,17 +20,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerErrorException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor

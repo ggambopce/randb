@@ -33,7 +33,6 @@ public class Account {
 
     LocalDate join_date;
 
-    private boolean verified;
 
     @Builder.Default
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true)

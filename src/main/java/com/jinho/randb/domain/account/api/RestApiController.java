@@ -19,17 +19,17 @@ public class RestApiController {
         return accountDto;
     }
 
-    @GetMapping(value="/manager")
+    @GetMapping(value="/user/manager")
     public AccountDto restManager(@AuthenticationPrincipal AccountDto accountDto) {
         return accountDto;
     }
 
-    @GetMapping(value="/admin")
+    @GetMapping(value="/user/admin")
     public AccountDto restAdmin(@AuthenticationPrincipal AccountDto accountDto) {
         return accountDto;
     }
 
-    @GetMapping(value = "/logout")
+    @GetMapping(value = "/user/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         if (authentication != null) {

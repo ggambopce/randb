@@ -25,12 +25,10 @@ public class AccountDto {
     Long id;
 
     @NotEmpty(message = "이름을 입력주세요")
-    @Pattern(regexp = "^[가-힣]+.{1,}$",message = "이름을 정확이 입력해주세요")
     @Schema(description = "사용자 실명",example = "홍길동")
     String username;
 
     @NotEmpty(message = "비밀번호를 입력해주세요")
-    @Pattern(regexp = "^(?=.*[`~!@#$%^&*()_+])(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,16}$",message = "사용할수 없는 비밀번호 입니다.")
     @Schema(description = "비밀번호",example = "asdASD12!@")
     String password;
 

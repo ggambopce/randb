@@ -30,22 +30,30 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void save(UserAddRequest userAddRequest) {
+        Long accountId = userAddRequest.getAccountId();
 
-        Account account = accountRepository.findById(userAddRequest.getAccountId())
-                .orElseThrow(() -> new NoSuchElementException("해당 계정을 찾을 수 없습니다."));
+        Optional<Account> op_account = accountRepository.findById(accountId);
 
-        // DTO -> domain 변환
-        Post post = Post.builder()
-                .postTitle(userAddRequest.getPostTitle())
-                .postContent(userAddRequest.getPostContent())
-                .account(account)
-                .createdAt(LocalDateTime.now())
-                .build();
+        if (op_account.isPresent()) {
 
-        postRepository.save(post);
+            Account account = op_account.get();
+            // DTO -> domain 변환
+            Post post = Post.builder()
+                    .postTitle(userAddRequest.getPostTitle())
+                    .postContent(userAddRequest.getPostContent())
+                    .account(account)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            postRepository.save(post);
+
+        } else {
+
+            throw new NoSuchElementException("토론글 저장에 실패했습니다.");
+
+        }
+
     }
-
-
     @Override
     public Optional<Post> findById(Long id) {
         return postRepository.findById(id);
