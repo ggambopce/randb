@@ -82,6 +82,11 @@ public class RestAccountController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
             }
 
+            // roles 값이 비어있다면 기본값 설정
+            if (accountDto.getRoles() == null || accountDto.getRoles().isEmpty()) {
+                accountDto.setRoles("ROLE_USER");
+            }
+
             accountService.signup(accountDto);
 
             ControllerApiResponse<Object> response = ControllerApiResponse.builder()

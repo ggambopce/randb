@@ -2,10 +2,7 @@ package com.jinho.randb.domain.account.domain;
 
 import com.jinho.randb.domain.post.domain.Post;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public class Account {
     private String username;
     @Column(name = "password")
     private String password;
-
+    @Column(name = "roles")
     private String roles;
 
     LocalDate join_date;

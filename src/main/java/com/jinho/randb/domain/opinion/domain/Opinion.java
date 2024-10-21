@@ -22,6 +22,7 @@ public class Opinion {
     @Column(name= "opinion_id", updatable = false)
     private Long id;
 
+    @Lob
     @Column(name = "opinion_content", nullable = false)
     private String opinionContent;
 
@@ -32,6 +33,7 @@ public class Opinion {
     private LocalDateTime created_at;
 
     private LocalDateTime updated_at;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Schema(hidden = true)

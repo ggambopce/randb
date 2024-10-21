@@ -1,8 +1,9 @@
 package com.jinho.randb.domain.opinionsummary.api;
 
 import com.jinho.randb.domain.opinion.application.OpinionService;
-import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.domain.OpinionType;
+import com.jinho.randb.domain.opinion.dto.OpinionContentAndTypeDto;
+import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,19 +48,20 @@ public class OpinionSummaryController {
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 및 요약 성공\",\"summary\": \"[요약된 내용]\"}")))
     })
     @GetMapping("/opinions/summary")
-    public ResponseEntity<?> summarizeOpinions(@Parameter(description = "게시글 ID") @RequestParam(value = "postId", required = false) Long postId) {
-        List<Opinion> opinions = opinionService.findByPostId(postId);
+    public ResponseEntity<?> summarizeOpinions(@Parameter(description = "토론글 ID") @RequestParam(value = "postId", required = false) Long postId) {
+        // 이미 OpinionDto로 변환된 데이터를 가져오기 때문에 다시 변환하지 않음
+        List<OpinionContentAndTypeDto> opinionDtos = opinionService.findByPostId(postId);
 
         // RED 의견 필터링
-        List<String> redOpinions = opinions.stream()
+        List<String> redOpinions = opinionDtos.stream()
                 .filter(opinion -> opinion.getOpinionType() == OpinionType.RED)
-                .map(Opinion::getOpinionContent)
+                .map(OpinionContentAndTypeDto::getOpinionContent)
                 .collect(Collectors.toList());
 
         // BLUE 의견 필터링
-        List<String> blueOpinions = opinions.stream()
+        List<String> blueOpinions = opinionDtos.stream()
                 .filter(opinion -> opinion.getOpinionType() == OpinionType.BLUE)
-                .map(Opinion::getOpinionContent)
+                .map(OpinionContentAndTypeDto::getOpinionContent)
                 .collect(Collectors.toList());
 
         // RED 의견 요약

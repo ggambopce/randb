@@ -32,8 +32,7 @@ public class AccountDto {
     @Schema(description = "비밀번호",example = "asdASD12!@")
     String password;
 
-    @JsonIgnore
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Schema(description = "ROLE_USER",example = "ROLE_USER")
     String roles;
 
     @JsonIgnore
@@ -50,9 +49,10 @@ public class AccountDto {
                 .build();
     }
 
-    private AccountDto(Long accountId, String username, LocalDate join_date) {
+    private AccountDto(Long accountId, String username, String roles, LocalDate join_date) {
         this.id = accountId;
         this.username = username;
+        this.roles = roles;
         this.join_date = join_date;
     }
 
@@ -64,8 +64,8 @@ public class AccountDto {
                 .roles(account.getRoles()).build();
     }
 
-    public static AccountDto of(Long accountId, String username, LocalDate join_date) {
-        return new AccountDto(accountId, username, join_date);
+    public static AccountDto of(Long accountId, String username, String roles, LocalDate join_date) {
+        return new AccountDto(accountId, username, roles, join_date);
     }
 
 }

@@ -3,6 +3,8 @@ package com.jinho.randb.domain.opinion.api;
 import com.jinho.randb.domain.opinion.application.OpinionService;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
+import com.jinho.randb.domain.opinion.dto.OpinionContentAndTypeDto;
+import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
 import com.jinho.randb.domain.opinion.exception.OpinionException;
 import com.jinho.randb.domain.post.domain.Post;
@@ -68,7 +70,7 @@ public class OpinionController {
         }
     }
 
-    @Operation(summary = "의견 전체 조회 API", description = "의견의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
+    @Operation(summary = "의견 전체 조회 API", description = "해당 토론글의 의견을 모두 조회", tags = {"일반 사용자 의견 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = Post.class),
@@ -76,7 +78,7 @@ public class OpinionController {
     })
     @GetMapping("/opinions")
     public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = false)Long postId) {
-        List<Opinion> opinions = opinionService.findByPostId(postId);
+        List<OpinionContentAndTypeDto> opinions = opinionService.findByPostId(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", opinions));
     }
 

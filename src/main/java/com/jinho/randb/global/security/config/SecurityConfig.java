@@ -89,6 +89,7 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/*").permitAll()
                         .requestMatchers("/signup","/login*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/posts").hasAuthority("ROLE_USER")  // 게시물 작성은 ROLE_USER 권한 필요
+                        .requestMatchers(HttpMethod.POST, "/api/user/opinions").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/user").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/manager").hasAuthority("ROLE_MANAGER")
                         .requestMatchers("/api/admin").hasAuthority("ROLE_ADMIN")
