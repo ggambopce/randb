@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface OpinionService {
 
-    void save(AddOpinionRequest addOpinionRequest);
+    Opinion save(AddOpinionRequest addOpinionRequest);
 
     Optional<Opinion> findById(Long id);
 

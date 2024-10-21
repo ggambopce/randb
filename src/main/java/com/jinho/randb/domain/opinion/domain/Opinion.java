@@ -1,6 +1,7 @@
 package com.jinho.randb.domain.opinion.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.post.domain.Post;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -31,6 +32,11 @@ public class Opinion {
     private LocalDateTime created_at;
 
     private LocalDateTime updated_at;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Schema(hidden = true)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Schema(hidden = true)

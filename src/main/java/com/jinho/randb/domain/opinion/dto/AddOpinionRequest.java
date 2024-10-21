@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class AddOpinionRequest {
 
@@ -27,6 +26,9 @@ public class AddOpinionRequest {
     @NotNull
     private OpinionType opinionType;
 
+    @Schema(description = "사용자 id", example = "1")
+    private  Long accountId;
+
     @Schema(description = "토론글 id", example = "1")
     private Long postId;
 
@@ -36,9 +38,13 @@ public class AddOpinionRequest {
     @JsonIgnore
     @JsonCreator
     public AddOpinionRequest(@JsonProperty("opinionContent") String opinionContent,
+                             @JsonProperty("opinionType") OpinionType opinionType,
+                             @JsonProperty("accountId") Long accountId,
                              @JsonProperty("postId") Long postId,
                              @JsonProperty("create_at")LocalDateTime created_at) {
         this.opinionContent = opinionContent;
+        this.opinionType = opinionType;
+        this.accountId = accountId;
         this.postId = postId;
         this.created_at = created_at;
     }

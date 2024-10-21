@@ -1,5 +1,8 @@
 package com.jinho.randb.domain.opinion.application;
 
+import com.jinho.randb.domain.account.dao.AccountRepository;
+import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.opinion.dao.OpinionRepository;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
@@ -23,28 +26,33 @@ import java.util.Optional;
 public class OpinionServiceImpl implements OpinionService {
 
     private final OpinionRepository opinionRepository;
+    private final AccountRepository accountRepository;
     private final PostRepository postRepository;
 
     @Override
-    public void save(AddOpinionRequest addOpinionRequest) {
+    public Opinion save(AddOpinionRequest addOpinionRequest) {
+        Long accountId = addOpinionRequest.getAccountId();
         Long postId = addOpinionRequest.getPostId();
 
+        Optional<Account>accountOptional = accountRepository.findById(accountId);
         Optional<Post>postOptional = postRepository.findById(postId);
 
-        if (postOptional.isEmpty()) {
-            throw new IllegalArgumentException("해당 postId에 대한 Post가 존재하지 않습니다.");
+        if (accountOptional.isPresent() && postOptional.isEmpty()) {     //사용자 정보와 게시글의 정보가 존재할시에만 통과
+            Account account = accountOptional.get();
+            Post post = postOptional.get();
+            LocalDateTime localDateTime = LocalDateTime.now().withNano(0).withSecond(0);
+
+            Opinion opinion = Opinion.builder()
+                    .opinionContent(addOpinionRequest.getOpinionContent())
+                    .opinionType(addOpinionRequest.getOpinionType())
+                    .account(account)
+                    .post(post)
+                    .created_at(localDateTime)
+                    .build();
+            return opinionRepository.save(opinion);
+        }else {
+            throw new NoSuchElementException("회원정보나 게시글을 찾을수 없습니다.");
         }
-
-        Post post = postOptional.get();
-        LocalDateTime localDateTime = LocalDateTime.now().withNano(0).withSecond(0);
-
-        Opinion opinion = Opinion.builder()
-                .opinionContent(addOpinionRequest.getOpinionContent())
-                .opinionType(addOpinionRequest.getOpinionType())
-                .post(post)
-                .created_at(localDateTime)
-                .build();
-        opinionRepository.save(opinion);
     }
 
     @Override

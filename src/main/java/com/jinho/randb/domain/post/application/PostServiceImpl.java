@@ -31,10 +31,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public void save(UserAddRequest userAddRequest) {
 
+        Account account = accountRepository.findById(userAddRequest.getAccountId())
+                .orElseThrow(() -> new NoSuchElementException("해당 계정을 찾을 수 없습니다."));
+
         // DTO -> domain 변환
         Post post = Post.builder()
                 .postTitle(userAddRequest.getPostTitle())
                 .postContent(userAddRequest.getPostContent())
+                .account(account)
                 .createdAt(LocalDateTime.now())
                 .build();
 

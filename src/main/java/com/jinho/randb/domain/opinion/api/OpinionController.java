@@ -4,7 +4,9 @@ import com.jinho.randb.domain.opinion.application.OpinionService;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
 import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
+import com.jinho.randb.domain.opinion.exception.OpinionException;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.dto.user.UserAddRequest;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,10 +26,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerErrorException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController
@@ -50,11 +54,23 @@ public class OpinionController {
                             examples = @ExampleObject(value = "[{\"success\":false,\"message\":\"의견을 입력해주세요\"}, {\"success\":false,\"message\":\"회원정보나 게시글을 찾을수 없습니다.\"}]"))),
     })
     @PostMapping("/user/opinions")
-    public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest){
+    public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest, BindingResult bindingResult){
 
-        opinionService.save(addOpinionRequest);
+        try {
+            if (bindingResult.hasErrors()){
+                return ResponseEntity.badRequest().body(new ErrorResponse<>(false, bindingResult.getFieldError().getDefaultMessage()));
+            }
+            Opinion save = opinionService.save(addOpinionRequest);
 
-        return ResponseEntity.ok(new ControllerApiResponse(true,"작성 성공"));
+            AddOpinionRequest addResponse = new AddOpinionRequest(save.getOpinionContent(), save.getOpinionType(), save.getAccount().getId(), save.getPost().getId(), save.getCreated_at());
+            return ResponseEntity.ok(new ControllerApiResponse(true,"성공", addResponse));
+
+        }catch (NoSuchElementException e){
+            throw new OpinionException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ServerErrorException("서버오류", e);
+        }
     }
 
     @Operation(summary = "의견 전체 조회 API", description = "의견의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
