@@ -94,7 +94,7 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            fetch('/api/login', {
+            fetch('/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -107,7 +107,7 @@
                 .then(response => {
                     response.json().then(function (data) {
                         console.log(data);
-                        window.location.replace('/api')
+                        window.location.replace('/main')
                     })
                 })
                 .catch(error => {

@@ -143,15 +143,14 @@
                         <div class="radio-group">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="opinionColor" id="red" value="RED" required>
-                                <label class="form-check-label" for="red">RED</label>
+                                <label class="form-check-label" for="red">RED(찬성)</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="opinionColor" id="blue" value="BLUE" required>
-                                <label class="form-check-label" for="blue">BLUE</label>
+                                <label class="form-check-label" for="blue">BLUE(반대)</label>
                             </div>
                         </div>
 
-                        <!-- 의견 내용 작성 -->
                         <div class="form-group mt-3">
                             <textarea class="form-control" name="opinionContent" rows="5" placeholder="의견을 작성해주세요..." required></textarea>
                         </div>
@@ -160,10 +159,96 @@
                         <button type="submit" class="btn btn-primary">의견 제출</button>
                     </form>
                 </div>
+
+                <hr>
+
+                <div class="opinionsummary-container">
+                    <h4>의견내용을 요약하세요</h4>
+                    <!-- 의견 내용 작성 -->
+                    <!-- 의견 작성 및 목록 섹션 아래에 의견 요약 버튼 추가 -->
+                <div class="opinion-summary">
+                    <button id="summaryButton" class="btn btn-secondary">의견 요약</button>
+                    <div id="opinionSummary" class="mt-3"></div> <!-- 요약 결과를 표시할 곳 -->
+                </div>
+                </div>
+
+                <hr>
+                    <!-- 의견 리스트 섹션 -->
+                    <h4>의견 목록</h4>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">의견 내용</th>
+                            <th scope="col">의견 타입</th>
+                        </tr>
+                        </thead>
+                        <tbody id="opinionList">
+                        <!-- 여기서 의견 목록이 동적으로 추가됩니다. -->
+                        </tbody>
+                    </table>
+
+                </div>
             </div>
         </div>
+    </div>
 
         <div class="footer" th:replace="~{layout/footer::footer}"></div>
+    </div>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+    // 페이지가 로드될 때 의견을 불러오는 함수
+    window.onload = function() {
+        // URL에서 postId 추출
+        const urlParams = new URLSearchParams(window.location.search);
+        let postId = urlParams.get('postId'); // 동적으로 postId 추출
+        if (!postId) { // postId가 없으면 기본값 설정
+            postId = 1;
+        }
 
+        fetch(`/api/opinions?postId=${postId}`)
+            .then(response => response.json())
+            .then(data => {
+                const opinionList = document.getElementById('opinionList');
+                data.data.forEach(opinion => { // 응답의 'data' 필드로 접근
+                    const tableRow = document.createElement('tr'); // 각 의견을 위한 행 생성
+
+                    // 의견 내용 셀 생성
+                    const contentCell = document.createElement('td');
+                    contentCell.textContent = opinion.opinionContent;
+
+                    // 의견 타입 셀 생성 (RED 또는 BLUE)
+                    const typeCell = document.createElement('td');
+                    typeCell.textContent = opinion.opinionType;
+
+                    // 행에 셀 추가
+                    tableRow.appendChild(contentCell);
+                    tableRow.appendChild(typeCell);
+
+                    // 테이블 본문에 행 추가
+                    opinionList.appendChild(tableRow);
+                });
+            })
+            .catch(error => console.error('Error fetching opinions:', error));
+    };
+
+    // 요약 버튼 클릭 시 요약 API 호출
+    document.getElementById('summaryButton').addEventListener('click', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let postId = urlParams.get('postId');
+        if (!postId) {
+            postId = 1;
+        }
+
+        fetch(`/api/opinions/summary?postId=${postId}`)
+            .then(response => response.json())
+            .then(data => {
+                const summaryDiv = document.getElementById('opinionSummary');
+                summaryDiv.innerHTML = `<strong>요약 결과:</strong><br> RED: ${data.data.RED}<br>BLUE: ${data.data.BLUE}`;
+            })
+            .catch(error => console.error('Error fetching summary:', error));
+    });
+</script>
 </body>
 </html>
