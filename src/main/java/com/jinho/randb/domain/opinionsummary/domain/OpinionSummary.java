@@ -22,6 +22,7 @@ public class OpinionSummary {
     @Column(name= "opinion_summary_id", updatable = false)
     private Long id;
 
+    @Lob
     @Column(name = "opinion_summary_content", nullable = false)
     private String opinionSummaryContent;
 

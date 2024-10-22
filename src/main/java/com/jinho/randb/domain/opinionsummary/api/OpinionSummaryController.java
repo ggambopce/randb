@@ -4,6 +4,8 @@ import com.jinho.randb.domain.opinion.application.OpinionService;
 import com.jinho.randb.domain.opinion.domain.OpinionType;
 import com.jinho.randb.domain.opinion.dto.OpinionContentAndTypeDto;
 import com.jinho.randb.domain.opinion.dto.OpinionDto;
+import com.jinho.randb.domain.opinionsummary.application.OpinionSummaryService;
+import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryDto;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,16 +40,17 @@ import java.util.stream.Collectors;
 public class OpinionSummaryController {
 
     private final OpinionService opinionService;
+    private final OpinionSummaryService opinionSummaryService;
     private final OpenAiChatModel openAiChatModel;
     //private final VertexAiGeminiChatModel vertexAiGeminiChatModel;
 
-    @Operation(summary = "의견 전체 조회 및 요약 API", description = "의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
+    @Operation(summary = "의견 전체 조회 및 요약 API V1", description = "의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다. 컨트롤러 버전", tags = {"일반 사용자 의견 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 및 요약 성공\",\"summary\": \"[요약된 내용]\"}")))
     })
-    @GetMapping("/opinions/summary")
+    @GetMapping("/opinions/summaryV1")
     public ResponseEntity<?> summarizeOpinions(@Parameter(description = "토론글 ID") @RequestParam(value = "postId", required = false) Long postId) {
         // 이미 OpinionDto로 변환된 데이터를 가져오기 때문에 다시 변환하지 않음
         List<OpinionContentAndTypeDto> opinionDtos = opinionService.findByPostId(postId);
@@ -79,4 +82,21 @@ public class OpinionSummaryController {
 
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "요약 성공", response));
     }
+
+
+    @Operation(summary = "의견 전체 조회 및 요약 API", description = "의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 및 요약 성공\",\"summary\": \"[요약된 내용]\"}")))
+    })
+    @GetMapping("/opinions/summary")
+    public ResponseEntity<?> saveOpinionSummary(@Parameter(description = "토론글 ID") @RequestParam(value = "postId", required = false) Long postId) {
+        // 의견 요약 서비스 호출
+        Map<String, String> summaryMap = opinionSummaryService.saveOpinionSummary(postId);
+
+        // 응답 생성
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "요약 성공", summaryMap));
+    }
+
 }
