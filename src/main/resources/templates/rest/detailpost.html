@@ -9,18 +9,18 @@
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #1e1e2f; /* 어두운 배경색 */
-            color: #abb2bf; /* 부드러운 글자색 */
+            color: #ffffff; /* 부드러운 글자색 */
         }
         .navbar-custom {
             background-color: #212338; /* 어두운 네이비 */
-            color: #fff;
+            color: #ffffff;
             margin-bottom: 0;
         }
         .container-fluid {
             padding: 0; /* container의 패딩 제거 */
         }
         .navbar-custom .navbar-brand, .navbar-custom .nav-link {
-            color: #fff;
+            color: #ffffff;
         }
         .sidebar {
             background-color: #212338; /* 어두운 네이비 */
@@ -57,6 +57,13 @@
         .sidebar .list-group-item:hover {
             background-color: #4e73df; /* 마우스 오버시 배경색 */
             color: #fff; /* 마우스 오버시 글자색 */
+        }
+        .table {
+            color: #ffffff; /* 테이블 전체 글자색을 하얀색으로 설정 */
+        }
+
+        .table th, table td {
+            color: #ffffff; /* 테이블 헤더와 데이터 셀의 글자색을 하얀색으로 설정 */
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -111,20 +118,52 @@
     </script>
 </head>
 <body>
+
 <div th:replace="~{rest/layout/header::header}"></div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2 sidebar">
             <div th:replace="~{rest/layout/sidebar::sidebar}"></div>
         </div>
-        <div class="col-md-10 content">
-            <div>
-                <h2>대시보드</h2>
-                <p id="content">환영합니다! 여기에 대시보드 관련 정보와 분석 데이터가 표시됩니다.</p>
+
+        <div class="container">
+            <div class="content">
+                <h2 th:text="${post.postTitle}">토론 주제</h2>
+                <p th:text="${post.postContent}">토론 내용</p>
+
+                <hr>
+
+                <!-- 의견 작성 섹션 -->
+                <div class="opinion-container">
+                    <h4>의견을 작성하세요</h4>
+
+                    <!-- RED와 BLUE 선택 -->
+                    <form action="/api/user/opinions" method="post">
+                        <div class="radio-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opinionColor" id="red" value="RED" required>
+                                <label class="form-check-label" for="red">RED</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="opinionColor" id="blue" value="BLUE" required>
+                                <label class="form-check-label" for="blue">BLUE</label>
+                            </div>
+                        </div>
+
+                        <!-- 의견 내용 작성 -->
+                        <div class="form-group mt-3">
+                            <textarea class="form-control" name="opinionContent" rows="5" placeholder="의견을 작성해주세요..." required></textarea>
+                        </div>
+
+                        <!-- 의견 제출 버튼 -->
+                        <button type="submit" class="btn btn-primary">의견 제출</button>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
-<div class="footer" th:replace="~{layout/footer::footer}"></div>
+
+        <div class="footer" th:replace="~{layout/footer::footer}"></div>
+
 </body>
 </html>

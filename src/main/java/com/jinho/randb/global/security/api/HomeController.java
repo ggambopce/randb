@@ -28,6 +28,6 @@ public class HomeController {
 
     @GetMapping(value="/api")
     public String restDashboard() {
-        return "rest/dashboard";
+        return "main";
     }
 }

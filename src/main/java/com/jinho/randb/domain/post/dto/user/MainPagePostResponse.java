@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class MainPagePostResponse {
 
-    private List<PostDto> post;
+    private List<PostDto> posts;
 
     private  MainPagePostResponse(List<PostDto> list) {
-        this.post = list;
+        this.posts = list;
     }
 
     public static MainPagePostResponse of(List<PostDto> list){
