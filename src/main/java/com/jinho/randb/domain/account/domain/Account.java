@@ -1,5 +1,6 @@
 package com.jinho.randb.domain.account.domain;
 
+import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,10 +31,13 @@ public class Account {
 
     LocalDate join_date;
 
-
     @Builder.Default
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true)
     List<Post> posts = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true)
+    List<Opinion> opinions = new ArrayList<>();
 
     public List<String> getRoleList() {
         if (this.roles != null && this.roles.length() > 0) {

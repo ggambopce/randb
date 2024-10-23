@@ -32,7 +32,7 @@ import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 @OpenAPIDefinition(tags = {
         @Tag(name = "일반 사용자 의견 컨트롤러", description = "일반 사용자 의견 관련 작업")
 })
@@ -50,7 +50,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "[{\"success\":false,\"message\":\"의견을 입력해주세요\"}, {\"success\":false,\"message\":\"회원정보나 게시글을 찾을수 없습니다.\"}]"))),
     })
-    @PostMapping("user/opinions")
+    @PostMapping("/api/user/opinions")
     public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest, BindingResult bindingResult){
 
         try {
@@ -59,7 +59,7 @@ public class OpinionController {
             }
             Opinion save = opinionService.save(addOpinionRequest);
 
-            AddOpinionRequest addResponse = new AddOpinionRequest(save.getOpinionContent(), save.getOpinionType(), save.getAccount().getId(), save.getPost().getId(), save.getCreated_at());
+            AddOpinionRequest addResponse = new AddOpinionRequest(save.getOpinionContent(), save.getOpinionType(), save.getAccount().getId(), save.getAccount().getUsername(), save.getPost().getId(), save.getCreated_at());
             return ResponseEntity.ok(new ControllerApiResponse(true,"성공", addResponse));
 
         }catch (NoSuchElementException e){
@@ -76,7 +76,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = Post.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"opinions\":[{\"id\":23, \"opinionContent\" : \"이것은 의견의 내용입니다.\"}]}")))
     })
-    @GetMapping("/opinions")
+    @GetMapping("/api/opinions")
     public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = true)Long postId) {
         List<OpinionContentAndTypeDto> opinions = opinionService.findByPostId(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", opinions));
@@ -95,7 +95,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"작성자만 삭제할수 있습니다.\"}")))
     })
-    @DeleteMapping("/user/opinions/{opinion-id}")
+    @DeleteMapping("/api/user/opinions/{opinion-id}")
     public ResponseEntity<?> deleteOpinion(@PathVariable("opinion-id") Long opinionId){
         opinionService.delete(opinionId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "게시글 삭제 성공"));
@@ -113,7 +113,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"작성자만 수정할 수 있습니다.\"}")))
     })
-    @PostMapping("/user/update/opinions/{opinion-id}")
+    @PostMapping("/api/user/update/opinions/{opinion-id}")
     public ResponseEntity<?> updateOpinion(@Valid @RequestBody UserUpdateOpinionDto userUpdateOpinionDto, @PathVariable("opinion-id") Long opinionId){
 
         opinionService.update(opinionId,userUpdateOpinionDto);

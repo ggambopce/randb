@@ -76,7 +76,58 @@
         <div class="col-md-2 sidebar">
             <div th:replace="~{layout/sidebar::sidebar}"></div>
         </div>
+        <div class="col-md-10 content">
+            <h1 class="mb-4">토론글 작성하기</h1>
+            <form id="discussionForm">
+                <div class="form-group">
+                    <label for="postTitle">토론글 제목</label>
+                    <input type="text" class="form-control" id="postTitle" name="postTitle" placeholder="제목을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label for="postContent">토론글 내용</label>
+                    <textarea class="form-control" id="postContent" name="postContent" rows="6" placeholder="내용을 입력하세요" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-custom">작성하기</button>
+            </form>
+        </div>
     </div>
 </div>
+<div class="footer" th:replace="~{layout/footer::footer}"></div>
+
+<script>
+    $(document).ready(function() {
+        // CSRF 토큰 설정
+        var csrfToken = $("meta[name='_csrf']").attr("content");
+        var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+
+        $("#discussionForm").submit(function(e) {
+            e.preventDefault();
+
+            // 폼 데이터 수집
+            var formData = {
+                postTitle: $("#postTitle").val(),
+                postContent: $("#postContent").val()
+            };
+
+            $.ajax({
+                url: '/api/user/posts',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                beforeSend: function(xhr) {
+                    // CSRF 토큰 설정
+                    xhr.setRequestHeader(csrfHeader, csrfToken);
+                },
+                success: function(response) {
+                    alert('토론글이 성공적으로 작성되었습니다!');
+                    window.location.href = '/posts'; // 성공 시 목록 페이지로 이동
+                },
+                error: function(xhr) {
+                    alert('토론글 작성에 실패했습니다. ' + xhr.responseJSON.message);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

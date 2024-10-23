@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
@@ -66,7 +68,7 @@
             color: #ffffff; /* 테이블 헤더와 데이터 셀의 글자색을 하얀색으로 설정 */
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
@@ -200,9 +202,6 @@
         // URL에서 postId 추출
         const urlParams = new URLSearchParams(window.location.search);
         let postId = urlParams.get('postId'); // 동적으로 postId 추출
-        if (!postId) { // postId가 없으면 기본값 설정
-            postId = 1;
-        }
 
         fetch(`/api/opinions?postId=${postId}`)
             .then(response => response.json())
@@ -237,13 +236,15 @@
 
         // CSRF 토큰 가져오기
         const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content; // CSRF 헤더 이름 가져오기
+
 
         // JSON 데이터로 AJAX 요청 보내기
         fetch('/api/user/opinions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 설정
+                [csrfHeader]: csrfToken // CSRF 토큰을 헤더에 추가
             },
             body: JSON.stringify({
                 opinionType: opinionType,

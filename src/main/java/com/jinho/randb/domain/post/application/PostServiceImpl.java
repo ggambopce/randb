@@ -42,7 +42,6 @@ public class PostServiceImpl implements PostService {
         Optional<Account> op_account = accountRepository.findById(accountId);
 
         if (op_account.isPresent()) {
-
             Account account = op_account.get();
             // DTO -> domain 변환
             Post post = Post.builder()

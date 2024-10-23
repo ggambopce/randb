@@ -60,4 +60,11 @@ public class FormPostController {
         }
     }
 
+    @GetMapping("/addpost")
+    public String addPostPage() {
+        return "rest/addpost"; // Thymeleaf 템플릿 파일이름 (addpost.html)
+    }
+
+
+
 }

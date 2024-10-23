@@ -20,6 +20,9 @@ public class UserAddRequest {
     @NotBlank(message = "토론 내용을 입력해주세요")
     private String postContent;
 
+    @Schema(description = "사용자 이름", example = "홍길동")
+    private String username;
+
     @Schema(description = "사용자 id", example = "1")
     private Long accountId;
 

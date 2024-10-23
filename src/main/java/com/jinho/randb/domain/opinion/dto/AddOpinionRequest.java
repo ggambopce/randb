@@ -29,6 +29,9 @@ public class AddOpinionRequest {
     @Schema(description = "사용자 id", example = "1")
     private  Long accountId;
 
+    @Schema(description = "사용자 이름", example = "홍길동")
+    private  String username;
+
     @Schema(description = "토론글 id", example = "1")
     private Long postId;
 
@@ -40,11 +43,13 @@ public class AddOpinionRequest {
     public AddOpinionRequest(@JsonProperty("opinionContent") String opinionContent,
                              @JsonProperty("opinionType") OpinionType opinionType,
                              @JsonProperty("accountId") Long accountId,
+                             @JsonProperty("username") String username,
                              @JsonProperty("postId") Long postId,
                              @JsonProperty("create_at")LocalDateTime created_at) {
         this.opinionContent = opinionContent;
         this.opinionType = opinionType;
         this.accountId = accountId;
+        this.username = username;
         this.postId = postId;
         this.created_at = created_at;
     }
