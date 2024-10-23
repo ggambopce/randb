@@ -49,7 +49,7 @@ public class PostController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"모든 값을 입력해 주세요\"}")))
     })
-    @PostMapping(value = "api/user/posts")
+    @PostMapping(value = "/api/user/posts")
     public ResponseEntity<?> postAdd(@Valid @RequestBody UserAddRequest userAddPostDto, BindingResult bindingResult){
 
         try{
@@ -73,7 +73,7 @@ public class PostController {
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
     })
     @GetMapping("/api/posts")
-    public ResponseEntity<?> findAllPost(Long postId, Pageable pageable) {
+    public ResponseEntity<?> findAllPost(@RequestParam(value = "postId", required = false) Long postId, Pageable pageable) {
         PostResponse postResponse = postService.postPage(postId, pageable);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
     }

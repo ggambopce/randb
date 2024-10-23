@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 public class RestApiController {
-    @GetMapping(value="/user")
+    @GetMapping(value="/rest/user")
     public AccountDto restUser(@AuthenticationPrincipal AccountDto accountDto) {
         return accountDto;
     }
 
-    @GetMapping(value="/user/manager")
+    @GetMapping(value="/rest/manager")
     public AccountDto restManager(@AuthenticationPrincipal AccountDto accountDto) {
         return accountDto;
     }
 
-    @GetMapping(value="/user/admin")
+    @GetMapping(value="/rest/admin")
     public AccountDto restAdmin(@AuthenticationPrincipal AccountDto accountDto) {
         return accountDto;
     }
 
-    @GetMapping(value = "/user/logout")
+    @GetMapping(value = "/rest/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         if (authentication != null) {

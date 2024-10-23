@@ -26,7 +26,7 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RestAuthenticationFilter(HttpSecurity http) {
-        super(new AntPathRequestMatcher("/api/login", "POST"));
+        super(new AntPathRequestMatcher("/login", "POST"));
         setSecurityContextRepository(getSecurityContextRepository(http));
     }
 

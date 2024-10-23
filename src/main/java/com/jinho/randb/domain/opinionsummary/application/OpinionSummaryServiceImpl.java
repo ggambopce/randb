@@ -74,8 +74,8 @@ public class OpinionSummaryServiceImpl implements OpinionSummaryService {
 
         // 요약된 내용을 Map으로 반환
         Map<String, String> response = new HashMap<>();
-        response.put("red_summary", redSummary);
-        response.put("blue_summary", blueSummary);
+        response.put("RED", redSummary);
+        response.put("BLUE", blueSummary);
 
         return response;
     }

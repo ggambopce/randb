@@ -32,7 +32,7 @@ public class FormPostController {
     }
 
     @GetMapping("/posts")
-    public String showPosts(@RequestParam(required = false) Long postId, Model model, Pageable pageable) {
+    public String showPosts(@RequestParam(value = "postId", required = false) Long postId, Model model, Pageable pageable) {
 
         PostResponse postResponse = postService.postPage(postId,pageable);
 

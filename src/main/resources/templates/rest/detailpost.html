@@ -119,12 +119,12 @@
 </head>
 <body>
 
-<div th:replace="~{rest/layout/header::header}"></div>
+<div th:replace="~{layout/header::header}"></div>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-2 sidebar">
-            <div th:replace="~{rest/layout/sidebar::sidebar}"></div>
+            <div th:replace="~{layout/sidebar::sidebar}"></div>
         </div>
 
         <div class="container">
@@ -138,33 +138,30 @@
                 <div class="opinion-container">
                     <h4>의견을 작성하세요</h4>
 
-                    <!-- RED와 BLUE 선택 -->
-                    <form action="/api/user/opinions" method="post">
-                        <div class="radio-group">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="opinionColor" id="red" value="RED" required>
-                                <label class="form-check-label" for="red">RED(찬성)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="opinionColor" id="blue" value="BLUE" required>
-                                <label class="form-check-label" for="blue">BLUE(반대)</label>
-                            </div>
+                    <!-- 의견 작성 폼 -->
+                    <div class="radio-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="opinionType" id="red" value="RED" required>
+                            <label class="form-check-label" for="red">RED(찬성)</label>
                         </div>
-
-                        <div class="form-group mt-3">
-                            <textarea class="form-control" name="opinionContent" rows="5" placeholder="의견을 작성해주세요..." required></textarea>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="opinionType" id="blue" value="BLUE" required>
+                            <label class="form-check-label" for="blue">BLUE(반대)</label>
                         </div>
+                    </div>
 
-                        <!-- 의견 제출 버튼 -->
-                        <button type="submit" class="btn btn-primary">의견 제출</button>
-                    </form>
+                    <div class="form-group mt-3">
+                        <textarea class="form-control" id="opinionContent" rows="5" placeholder="의견을 작성해주세요..." required></textarea>
+                    </div>
+
+                    <!-- 의견 제출 버튼 -->
+                    <button type="button" class="btn btn-primary" onclick="addOpinion()">의견 제출</button>
                 </div>
 
                 <hr>
 
                 <div class="opinionsummary-container">
                     <h4>의견내용을 요약하세요</h4>
-                    <!-- 의견 내용 작성 -->
                     <!-- 의견 작성 및 목록 섹션 아래에 의견 요약 버튼 추가 -->
                 <div class="opinion-summary">
                     <button id="summaryButton" class="btn btn-secondary">의견 요약</button>
@@ -232,6 +229,41 @@
             })
             .catch(error => console.error('Error fetching opinions:', error));
     };
+    //의견 제출
+    function addOpinion() {
+        // 의견 데이터 수집
+        const opinionType = document.querySelector('input[name="opinionType"]:checked').value;
+        const opinionContent = document.getElementById('opinionContent').value;
+
+        // CSRF 토큰 가져오기
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+
+        // JSON 데이터로 AJAX 요청 보내기
+        fetch('/api/user/opinions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken // CSRF 토큰 설정
+            },
+            body: JSON.stringify({
+                opinionType: opinionType,
+                opinionContent: opinionContent
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('의견이 성공적으로 제출되었습니다.');
+                    // 제출 성공 시 원하는 동작 추가
+                } else {
+                    alert('오류 발생: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('의견 제출 중 오류가 발생했습니다.');
+            });
+    }
 
     // 요약 버튼 클릭 시 요약 API 호출
     document.getElementById('summaryButton').addEventListener('click', function() {

@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +43,7 @@ import java.util.Map;
 @Tag(name = "회원가입 컨트롤러",description = "회원가입을 하기위한 API")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping
 public class RestAccountController {
 
     private final AccountService accountService;
@@ -59,7 +60,7 @@ public class RestAccountController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping("/join")
+    @PostMapping("/api/join")
     public ResponseEntity<?> join(@Valid @RequestBody AccountDto accountDto, BindingResult result){
 
         try {
@@ -115,7 +116,7 @@ public class RestAccountController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping("/login/login")
+    @PostMapping("/api/login")
     public ResponseEntity<?> login(@Valid @RequestBody AccountDto accountDto, BindingResult result, HttpServletRequest request) {
         try {
             if (result.hasErrors()) {
@@ -169,7 +170,7 @@ public class RestAccountController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\":false,\"message\":\"서버 오류로 로그아웃 실패\"}")))
     })
-    @GetMapping("/logout")
+    @GetMapping("/api/logout")
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {

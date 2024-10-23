@@ -50,7 +50,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "[{\"success\":false,\"message\":\"의견을 입력해주세요\"}, {\"success\":false,\"message\":\"회원정보나 게시글을 찾을수 없습니다.\"}]"))),
     })
-    @PostMapping("/user/opinions")
+    @PostMapping("user/opinions")
     public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest, BindingResult bindingResult){
 
         try {
@@ -77,7 +77,7 @@ public class OpinionController {
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"opinions\":[{\"id\":23, \"opinionContent\" : \"이것은 의견의 내용입니다.\"}]}")))
     })
     @GetMapping("/opinions")
-    public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = false)Long postId) {
+    public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = true)Long postId) {
         List<OpinionContentAndTypeDto> opinions = opinionService.findByPostId(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", opinions));
     }

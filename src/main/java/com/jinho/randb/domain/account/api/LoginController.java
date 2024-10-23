@@ -20,13 +20,13 @@ public class LoginController {
                         @RequestParam(value = "exception", required = false) String exception, Model model){
         model.addAttribute("error",error);
         model.addAttribute("exception",exception);
-        return "login/login";
+        return "/login";
     }
 
     @GetMapping(value = "/signup")
     public String signup() {
 
-        return "login/signup";
+        return "/signup";
     }
 
     @GetMapping(value = "/logout")
@@ -44,11 +44,12 @@ public class LoginController {
         model.addAttribute("username", accountDto.getUsername());
         model.addAttribute("exception", exception);
 
-        return "login/denied";
+        return "/denied";
     }
 
-    @GetMapping(value="/api/user/login")
+    @GetMapping(value="api/login")
     public String restlogin(){
-        return "rest/login";
+
+        return "rest/rlogin";
     }
 }

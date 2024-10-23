@@ -7,22 +7,22 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #1e1e2f; /* 어두운 배경색 */
-            color: #abb2bf; /* 부드러운 글자색 */
+            background-color: #1e1e2f;
+            color: #ffffff;
         }
         .navbar-custom {
-            background-color: #212338; /* 어두운 네이비 */
-            color: #fff;
+            background-color: #212338;
+            color: #ffffff;
             margin-bottom: 0;
         }
         .container-fluid {
-            padding: 0; /* container의 패딩 제거 */
+            padding: 0;
         }
         .navbar-custom .navbar-brand, .navbar-custom .nav-link {
-            color: #fff;
+            color: #ffffff;
         }
         .sidebar {
-            background-color: #212338; /* 어두운 네이비 */
+            background-color: #212338;
             min-height: 100vh;
             color: #fff;
         }
@@ -31,31 +31,36 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         .sidebar a:hover {
-            background-color: #4e73df; /* 밝은 푸른색 */
+            background-color: #4e73df;
             color: #fff;
         }
         .content {
             padding: 20px;
-            background-color: #282a36; /* 어두운 그레이 */
+            background-color: #282a36;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             margin-top: 0;
         }
         .footer {
-            background-color: #212338; /* 어두운 네이비 */
+            background-color: #212338;
             color: #fff;
             padding: 10px 0;
             border-top: 1px solid #282a36;
         }
         .sidebar .list-group-item {
-            color: white; /* 기본 글자색 */
-            background-color: transparent; /* 기본 배경색 */
-            transition: background-color 0.3s ease, color 0.3s ease; /* 부드러운 색상 전환 효과 */
+            color: white;
+            background-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
         .sidebar .list-group-item:hover {
-            background-color: #4e73df; /* 마우스 오버시 배경색 */
-            color: #fff; /* 마우스 오버시 글자색 */
+            background-color: #4e73df;
+            color: #fff;
+        }
+        .table {
+            color: #ffffff;
+        }
+        .table th, table td {
+            color: #ffffff;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
@@ -77,9 +82,7 @@
                 <thead>
                 <tr>
                     <th>토론 주제</th>
-                    <th>작성자</th>
                     <th>내용</th>
-                    <th>생성일</th>
                     <th>자세히 보기</th>
                 </tr>
                 </thead>
@@ -100,22 +103,22 @@
 <div class="footer" th:replace="~{layout/footer::footer}"></div>
 
 <script>
-    let currentPage = 1; // 현재 페이지 번호
-    const pageSize = 10; // 페이지당 표시할 항목 수
+    let currentPage = 1;
+    const pageSize = 10;
 
-    // 페이지네이션 버튼 클릭 시 호출되는 함수
     function loadPosts(page) {
-        currentPage = page; // 클릭한 페이지 번호로 갱신
+        currentPage = page;
         $.ajax({
             url: '/api/posts',
             type: 'GET',
             data: {
-                page: page - 1, // Spring의 Pageable은 0부터 시작
+                page: page - 1,
                 size: pageSize
             },
             success: function(response) {
-                renderTable(response.posts);
-                renderPagination(response.totalPages);
+                console.log("Response: ", response);
+                renderTable(response.data.posts);
+                renderPagination(response.data.nextPage);
             },
             error: function() {
                 alert('토론 목록을 불러오는 중 오류가 발생했습니다.');
@@ -123,35 +126,42 @@
         });
     }
 
-    // 테이블 렌더링 함수
     function renderTable(posts) {
         const tableBody = $('#discussionTableBody');
-        tableBody.empty(); // 기존 목록 제거
+        tableBody.empty();
+        if (posts.length === 0) {
+            tableBody.append('<tr><td colspan="3">데이터가 없습니다.</td></tr>');
+            return;
+        }
         posts.forEach(function(post) {
             const row = '<tr>' +
                 '<td>' + post.postTitle + '</td>' +
-                '<td>' + post.authorName + '</td>' +
                 '<td>' + post.postContent.substring(0, 30) + '...</td>' +
-                '<td>' + post.createdAt + '</td>' +
                 '<td><a href="/discussion/' + post.id + '" class="btn btn-primary btn-sm">보기</a></td>' +
                 '</tr>';
             tableBody.append(row);
         });
     }
 
-    // 페이지네이션 렌더링 함수
-    function renderPagination(totalPages) {
+    function renderPagination(hasNext) {
         const pagination = $('#pagination');
-        pagination.empty(); // 기존 페이지네이션 제거
-        for (let i = 1; i <= totalPages; i++) {
-            const pageItem = '<li class="page-item ' + (i === currentPage ? 'active' : '') + '">' +
-                '<a class="page-link" href="#" onclick="loadPosts(' + i + ')">' + i + '</a>' +
+        pagination.empty();
+
+        if (currentPage > 1) {
+            const prevPageItem = '<li class="page-item">' +
+                '<a class="page-link" href="#" onclick="loadPosts(' + (currentPage - 1) + ')">이전</a>' +
                 '</li>';
-            pagination.append(pageItem);
+            pagination.append(prevPageItem);
+        }
+
+        if (hasNext) {
+            const nextPageItem = '<li class="page-item">' +
+                '<a class="page-link" href="#" onclick="loadPosts(' + (currentPage + 1) + ')">다음</a>' +
+                '</li>';
+            pagination.append(nextPageItem);
         }
     }
 
-    // 페이지 로드 시 첫 페이지 불러오기
     $(document).ready(function() {
         loadPosts(currentPage);
     });
