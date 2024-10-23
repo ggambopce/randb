@@ -2,6 +2,7 @@ package com.jinho.randb.domain.post.application;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.domain.account.dto.AccountContext;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +33,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void save(UserAddRequest userAddRequest) {
-        Long accountId = userAddRequest.getAccountId();
+        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AccountContext accountContext = (AccountContext) authentication.getPrincipal();
+        Long accountId = accountContext.getAccountDto().getId();  // 로그인된 사용자의 accountId 가져오기
+
 
         Optional<Account> op_account = accountRepository.findById(accountId);
 

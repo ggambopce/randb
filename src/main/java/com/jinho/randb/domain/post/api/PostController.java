@@ -1,5 +1,7 @@
 package com.jinho.randb.domain.post.api;
 
+import com.jinho.randb.domain.account.dto.AccountContext;
+import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.user.*;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
