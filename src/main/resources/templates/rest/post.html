@@ -90,6 +90,7 @@
                 <tr>
                     <th>토론 주제</th>
                     <th>내용</th>
+                    <th>작성자</th> <!-- 작성자 열 추가 -->
                     <th>자세히 보기</th>
                 </tr>
                 </thead>
@@ -159,6 +160,7 @@
             const row = '<tr>' +
                 '<td>' + post.postTitle + '</td>' +
                 '<td>' + post.postContent.substring(0, 30) + '...</td>' +
+                '<td>' + post.username + '</td>' +  // 작성자 추가
                 '<td><a href="/detailpost/' + post.id + '" class="btn btn-primary btn-sm">보기</a></td>' +
                 '</tr>';
             tableBody.append(row);

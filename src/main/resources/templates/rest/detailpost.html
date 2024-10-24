@@ -132,6 +132,7 @@
         <div class="container">
             <div class="content">
                 <h2 th:text="${post.postTitle}">토론 주제</h2>
+                <h5>작성자 : <span th:text="${post.account.username}">작성자 이름</span></h5> <!-- 작성자 추가 -->
                 <p th:text="${post.postContent}">토론 내용</p>
 
                 <hr>
@@ -193,21 +194,28 @@
 
         <div class="footer" th:replace="~{layout/footer::footer}"></div>
     </div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
     // 페이지가 로드될 때 의견을 불러오는 함수
     window.onload = function() {
-        // URL에서 postId 추출
-        const urlParams = new URLSearchParams(window.location.search);
-        let postId = urlParams.get('postId'); // 동적으로 postId 추출
+        // URL 경로에서 postId 추출
+        const postId = window.location.pathname.split('/').pop(); // 경로에서 postId 추출
+
+        console.log('Extracted postId from URL:', postId);
+
+        if (!postId) {
+            console.error('postId is missing in the URL');
+            return;
+        }
 
         fetch(`/api/opinions?postId=${postId}`)
             .then(response => response.json())
             .then(data => {
                 const opinionList = document.getElementById('opinionList');
-                data.data.forEach(opinion => { // 응답의 'data' 필드로 접근
+                opinionList.innerHTML = '';  // 기존 목록을 초기화
+                data.data.forEach(opinion => {  // 'data' 배열에 직접 접근
                     const tableRow = document.createElement('tr'); // 각 의견을 위한 행 생성
 
                     // 의견 내용 셀 생성
@@ -233,10 +241,12 @@
         // 의견 데이터 수집
         const opinionType = document.querySelector('input[name="opinionType"]:checked').value;
         const opinionContent = document.getElementById('opinionContent').value;
+        const postId = document.getElementById('postId').value;
 
         // CSRF 토큰 가져오기
         const csrfToken = document.querySelector('meta[name="_csrf"]').content;
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content; // CSRF 헤더 이름 가져오기
+
 
 
         // JSON 데이터로 AJAX 요청 보내기
