@@ -67,6 +67,7 @@
         .table th, table td {
             color: #ffffff; /* 테이블 헤더와 데이터 셀의 글자색을 하얀색으로 설정 */
         }
+
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -141,6 +142,8 @@
                 <div class="opinion-container">
                     <h4>의견을 작성하세요</h4>
 
+                    <input type="hidden" id="postId" th:value="${post.id}" />
+
                     <!-- 의견 작성 폼 -->
                     <div class="radio-group">
                         <div class="form-check">
@@ -179,6 +182,7 @@
                         <thead>
                         <tr>
                             <th scope="col">의견 내용</th>
+                            <th scope="col">작성자</th> <!-- 작성자 열 추가 -->
                             <th scope="col">의견 타입</th>
                         </tr>
                         </thead>
@@ -218,9 +222,14 @@
                 data.data.forEach(opinion => {  // 'data' 배열에 직접 접근
                     const tableRow = document.createElement('tr'); // 각 의견을 위한 행 생성
 
+
                     // 의견 내용 셀 생성
                     const contentCell = document.createElement('td');
                     contentCell.textContent = opinion.opinionContent;
+
+                    // 의견 작성자 셀 생성
+                    const usernameCell = document.createElement('td');
+                    usernameCell.textContent = opinion.username; // 의견 작성자의 이름
 
                     // 의견 타입 셀 생성 (RED 또는 BLUE)
                     const typeCell = document.createElement('td');
@@ -228,6 +237,7 @@
 
                     // 행에 셀 추가
                     tableRow.appendChild(contentCell);
+                    tableRow.appendChild(usernameCell);
                     tableRow.appendChild(typeCell);
 
                     // 테이블 본문에 행 추가
@@ -239,6 +249,12 @@
     //의견 제출
     function addOpinion() {
         // 의견 데이터 수집
+        const selectedOpinionType = document.querySelector('input[name="opinionType"]:checked');
+        if (!selectedOpinionType) {
+            alert('의견 타입을 선택해주세요.');
+            return; // 의견 타입이 선택되지 않으면 함수 종료
+        }
+
         const opinionType = document.querySelector('input[name="opinionType"]:checked').value;
         const opinionContent = document.getElementById('opinionContent').value;
         const postId = document.getElementById('postId').value;
@@ -246,8 +262,6 @@
         // CSRF 토큰 가져오기
         const csrfToken = document.querySelector('meta[name="_csrf"]').content;
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content; // CSRF 헤더 이름 가져오기
-
-
 
         // JSON 데이터로 AJAX 요청 보내기
         fetch('/api/user/opinions', {
@@ -258,7 +272,8 @@
             },
             body: JSON.stringify({
                 opinionType: opinionType,
-                opinionContent: opinionContent
+                opinionContent: opinionContent,
+                postId: postId // postId도 함께 전송
             })
         })
             .then(response => response.json())

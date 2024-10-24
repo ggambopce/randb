@@ -71,10 +71,7 @@ public class OpinionServiceImpl implements OpinionService {
 
     @Override
     public List<OpinionContentAndTypeDto> findByPostId(Long postId) {
-        List<Opinion> opinions = opinionRepository.findByPostId(postId);
-        return opinions.stream()
-                .map(OpinionContentAndTypeDto::from)
-                .collect(Collectors.toList());
+        return opinionRepository.findByPostId(postId);
     }
 
     @Override
