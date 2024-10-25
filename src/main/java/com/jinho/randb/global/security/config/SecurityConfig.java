@@ -86,7 +86,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/*").permitAll()
-                        .requestMatchers("/signup","/login*","rest/main").permitAll()// /main 경로는 로그인 없이 접근 허용
+                        .requestMatchers("/signup","/login*","rest/main","/dashboard").permitAll()// /main 경로는 로그인 없이 접근 허용
                         .requestMatchers(HttpMethod.POST, "/api/user/posts").hasAuthority("ROLE_USER")  // 게시물 작성은 ROLE_USER 권한 필요
                         .requestMatchers(HttpMethod.POST, "/api/user/opinions").hasAuthority("ROLE_USER") //의견작성은 ROLE_USER 권한 필요
                         .requestMatchers("/api/user").hasAuthority("ROLE_USER")

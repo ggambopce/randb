@@ -1,7 +1,5 @@
 package com.jinho.randb.domain.post.api;
 
-import com.jinho.randb.domain.account.dto.AccountContext;
-import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.user.*;
@@ -25,13 +23,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ServerErrorException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -121,6 +121,25 @@ public class PostController {
     @GetMapping("/api/user/detail/posts/{post-id}")
     public ResponseEntity<?> getdetail(@PathVariable("post-id") long postId) {
         PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
+
+        // 로그인된 사용자 정보 확인
+        boolean isAuthor = false;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            String currentUsername = principalDetails.getUsername();
+
+            // 게시글 작성자와 현재 로그인한 사용자 비교
+            isAuthor = postDetailResponse.getPost().getUsername().equals(currentUsername);
+        }
+
+        System.out.println("현재 로그인 사용자: " + (authentication != null ? authentication.getName() : "비로그인"));
+        System.out.println("게시글 작성자: " + postDetailResponse.getPost().getUsername());
+        System.out.println("isAuthor: " + isAuthor);
+
+        // isAuthor 값 설정
+        postDetailResponse.setAuthor(isAuthor);
+
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postDetailResponse));
     }
 
