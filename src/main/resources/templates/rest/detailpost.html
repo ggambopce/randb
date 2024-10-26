@@ -168,11 +168,10 @@
 
                 <div class="opinionsummary-container">
                     <h4>의견내용을 요약하세요</h4>
-                    <!-- 의견 작성 및 목록 섹션 아래에 의견 요약 버튼 추가 -->
-                <div class="opinion-summary">
-                    <button id="summaryButton" class="btn btn-secondary">의견 요약</button>
-                    <div id="opinionSummary" class="mt-3"></div> <!-- 요약 결과를 표시할 곳 -->
-                </div>
+                    <div class="opinion-summary">
+                        <button id="summaryButton" class="btn btn-secondary">의견 요약</button>
+                        <div id="opinionSummary" class="mt-3"></div> <!-- 요약 결과를 표시할 곳 -->
+                    </div>
                 </div>
 
                 <hr>
@@ -202,17 +201,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
+
     // 페이지가 로드될 때 의견을 불러오는 함수
     window.onload = function() {
         // URL 경로에서 postId 추출
         const postId = window.location.pathname.split('/').pop(); // 경로에서 postId 추출
 
-        console.log('Extracted postId from URL:', postId);
-
         if (!postId) {
             console.error('postId is missing in the URL');
             return;
         }
+
+
 
         fetch(`/api/opinions?postId=${postId}`)
             .then(response => response.json())
@@ -293,10 +293,11 @@
 
     // 요약 버튼 클릭 시 요약 API 호출
     document.getElementById('summaryButton').addEventListener('click', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        let postId = urlParams.get('postId');
+        const postId = window.location.pathname.split('/').pop(); // 경로에서 postId 추출
+
         if (!postId) {
-            postId = 1;
+            console.error('postId is missing');
+            return;
         }
 
         fetch(`/api/opinions/summary?postId=${postId}`)

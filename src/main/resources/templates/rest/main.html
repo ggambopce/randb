@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
@@ -70,13 +72,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script>
+        function getCsrfToken() {
+            const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
+            const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+            return { csrfToken, csrfHeader };
+        }
+
         function restCall(url) {
+            const { csrfToken, csrfHeader } = getCsrfToken();
 
             fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    [csrfHeader]: csrfToken // CSRF 토큰 추가
                 }
             })
                 .then(response => {
@@ -85,34 +95,47 @@
                             console.log(data);
                             document.querySelector("#content").textContent=JSON.stringify(data, null, 2);
                         })
-                    }else if(response.status === 401){
-                        console.log(response.statusText)
-                        document.querySelector("#content").textContent=response.status;
-                    }else if(response.status === 403){
-                        console.log(response.statusText)
-                        document.querySelector("#content").textContent=response.status;
+                    }else if (response.status === 401) { // Unauthorized
+                        alert("인증이 필요합니다. 로그인 페이지로 이동합니다.");
+                        window.location.replace('/api/login'); // 로그인 페이지로 리다이렉트
+                    } else if (response.status === 403) { // Forbidden
+                        alert("접근 권한이 부족합니다. 로그인 페이지로 이동합니다.");
+                        window.location.replace('/api/login'); // 로그인 페이지로 리다이렉트
                     }
                 })
                 .catch(error => {
                     console.error('Error during login:', error);
                 });
         }
-        function logout() {
+        function viewPost(button) {
+            const postId = button.getAttribute("data-post-id"); // data-post-id 속성에서 postId 값 가져오기
+            const { csrfToken, csrfHeader } = getCsrfToken();
 
-            fetch('/api/logout', {
+            fetch(`/detailpost/${postId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+                    [csrfHeader]: csrfToken // CSRF 토큰 추가
                 }
             })
                 .then(response => {
-                    if(response.ok){
-                        window.location.replace('/api')
+                    if (response.ok) {
+                        response.json().then(function(data) {
+                            // 원하는 데이터를 가져와서 화면에 표시하는 등의 처리
+                            console.log("Post data: ", data);
+                            // 예를 들어 포스트 내용을 새로운 페이지로 표시하거나 모달을 열어 표시 가능
+                        });
+                    } else if (response.status === 401) { // Unauthorized
+                        alert("인증이 필요합니다. 로그인 페이지로 이동합니다.");
+                        window.location.replace('/api/login');
+                    } else if (response.status === 403) { // Forbidden
+                        alert("접근 권한이 부족합니다. 로그인 페이지로 이동합니다.");
+                        window.location.replace('/api/login');
                     }
                 })
                 .catch(error => {
-                    console.error('Error during login:', error);
+                    console.error('Error during fetching post data:', error);
                 });
         }
     </script>
@@ -144,7 +167,7 @@
                 <td th:text="${post.postTitle}">토론 주제</td>
                 <td th:text="${post.postContent}">토론 내용</td>
                 <td>
-                    <a th:href="@{'/detailpost/' + ${post.id}}" class="btn btn-primary btn-sm">보기</a>
+                    <button class="btn btn-primary btn-sm" data-post-id="[[${post.id}]]" onclick="viewPost(this)">보기</button>
                 </td>
             </tr>
             </tbody>

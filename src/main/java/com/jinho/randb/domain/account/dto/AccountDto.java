@@ -29,7 +29,7 @@ public class AccountDto {
     String username;
 
     @NotEmpty(message = "비밀번호를 입력해주세요")
-    @Schema(description = "비밀번호",example = "asdASD12!@")
+    @Schema(description = "비밀번호",example = "1234")
     String password;
 
     @Schema(description = "ROLE_USER",example = "ROLE_USER")

@@ -99,16 +99,28 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-Requested-With': 'XMLHttpRequest', //Ajax 통신임을 서버측에 전달하기 위한 헤더 설정
                     [csrfHeader]: csrfToken
                 },
                 body: JSON.stringify({ username, password }),
             })
                 .then(response => {
-                    response.json().then(function (data) {
-                        console.log(data);
-                        window.location.replace('/main')
-                    })
+                    if (response.ok) {  // 로그인 성공 시
+                        response.json().then(function (data) {
+                            console.log(data);
+                            window.location.replace('/main');
+                        });
+                    } else if (response.status === 401) {  // Unauthorized
+                        alert("인증되지 않은 사용자입니다. 다시 로그인하세요.");
+                        window.location.replace('/api/login'); // 로그인 페이지로 리다이렉트
+                    } else if (response.status === 403) {  // Forbidden
+                        alert("권한이 부족합니다. 다시 로그인하세요.");
+                        window.location.replace('/api/login'); // 로그인 페이지로 리다이렉트
+                    } else {
+                        response.json().then(data => {
+                            console.log("Login failed:", data);
+                        });
+                    }
                 })
                 .catch(error => {
                     console.error('Error during login:', error);
@@ -120,7 +132,8 @@
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
+
                 }
             })
                 .then(response => {
@@ -129,12 +142,15 @@
                             console.log(data);
                             document.querySelector("#content").textContent=JSON.stringify(data, null, 2);
                         })
-                    }else if(response.status === 401){
-                        console.log(response.statusText)
-                        document.querySelector("#content").textContent=response.status;
-                    }else if(response.status === 403){
-                        console.log(response.statusText)
-                        document.querySelector("#content").textContent=response.status;
+                    }else if (response.status === 401) {  // Unauthorized
+                        alert("인증되지 않은 사용자입니다. 다시 로그인하세요.");
+                        window.location.replace('/api/login'); // 로그인 페이지로 리다이렉트
+                    } else if (response.status === 403) {  // Forbidden
+                        alert("권한이 부족합니다. 다시 로그인하세요.");
+                        window.location.replace('/api/login'); // 로그인 페이지로 리다이렉트
+                    } else {
+                        console.log("Unexpected response:", response.statusText);
+                        document.querySelector("#content").textContent = response.status;
                     }
                 })
                 .catch(error => {

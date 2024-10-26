@@ -26,10 +26,11 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RestAuthenticationFilter(HttpSecurity http) {
-        super(new AntPathRequestMatcher("/login", "POST"));
-        setSecurityContextRepository(getSecurityContextRepository(http));
+        super(new AntPathRequestMatcher("/api/login", "POST"));
+        setSecurityContextRepository(getSecurityContextRepository(http)); //세션정보 저장
     }
 
+    //인증상태 영속
     private SecurityContextRepository getSecurityContextRepository(HttpSecurity http) {
         SecurityContextRepository securityContextRepository = http.getSharedObject(SecurityContextRepository.class);
         if (securityContextRepository == null) {
@@ -44,13 +45,13 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
             throws AuthenticationException, IOException {
 
         if (!HttpMethod.POST.name().equals(request.getMethod()) || !WebUtil.isAjax(request)) {
-            throw new IllegalArgumentException("Authentication method not supported");
+            throw new IllegalArgumentException("Authentication method is not supported");
         }
 
         AccountDto accountDto = objectMapper.readValue(request.getReader(), AccountDto.class);
 
         if (!StringUtils.hasText(accountDto.getUsername()) || !StringUtils.hasText(accountDto.getPassword())) {
-            throw new AuthenticationServiceException("Username or Password not provided");
+            throw new AuthenticationServiceException("Username or Password is not provided");
         }
         RestAuthenticationToken token = new RestAuthenticationToken(accountDto.getUsername(),accountDto.getPassword());
 

@@ -143,8 +143,16 @@
                 renderTable(response.data.posts);
                 renderPagination(response.data.nextPage);
             },
-            error: function() {
-                alert('토론 목록을 불러오는 중 오류가 발생했습니다.');
+            error: function(xhr) {
+                if (xhr.status === 401) {
+                    alert("인증이 필요합니다. 로그인 페이지로 이동합니다.");
+                    window.location.replace('/api/login'); // 401 상태일 경우 로그인 페이지로 리다이렉트
+                } else if (xhr.status === 403) {
+                    alert("접근 권한이 부족합니다. 로그인 페이지로 이동합니다.");
+                    window.location.replace('/api/login'); // 403 상태일 경우 로그인 페이지로 리다이렉트
+                } else {
+                    alert('토론 목록을 불러오는 중 오류가 발생했습니다.');
+                }
             }
         });
     }
