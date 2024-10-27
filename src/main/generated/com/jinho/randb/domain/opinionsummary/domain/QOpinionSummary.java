@@ -52,7 +52,7 @@ public class QOpinionSummary extends EntityPathBase<OpinionSummary> {
 
     public QOpinionSummary(Class<? extends OpinionSummary> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.post = inits.isInitialized("post") ? new com.jinho.randb.domain.post.domain.QPost(forProperty("post")) : null;
+        this.post = inits.isInitialized("post") ? new com.jinho.randb.domain.post.domain.QPost(forProperty("post"), inits.get("post")) : null;
     }
 
 }

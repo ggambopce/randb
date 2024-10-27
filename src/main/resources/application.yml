@@ -1,0 +1,44 @@
+spring:
+  
+
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/jpashop
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        #       show_sql: true
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+
+  thymeleaf:
+    prefix: classpath:/templates/   # 기본 템플릿 경로
+    suffix: .html                   # 템플릿 파일 확장자
+    mode: HTML                      # 처리 모드
+    cache: false                    # 개발 중에는 캐싱 비활성화
+    encoding: UTF-8                 # 인코딩 설정
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /api/**

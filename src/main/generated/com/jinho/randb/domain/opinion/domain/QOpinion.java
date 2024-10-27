@@ -22,6 +22,8 @@ public class QOpinion extends EntityPathBase<Opinion> {
 
     public static final QOpinion opinion = new QOpinion("opinion");
 
+    public final com.jinho.randb.domain.account.domain.QAccount account;
+
     public final DateTimePath<java.time.LocalDateTime> created_at = createDateTime("created_at", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -52,7 +54,8 @@ public class QOpinion extends EntityPathBase<Opinion> {
 
     public QOpinion(Class<? extends Opinion> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.post = inits.isInitialized("post") ? new com.jinho.randb.domain.post.domain.QPost(forProperty("post")) : null;
+        this.account = inits.isInitialized("account") ? new com.jinho.randb.domain.account.domain.QAccount(forProperty("account")) : null;
+        this.post = inits.isInitialized("post") ? new com.jinho.randb.domain.post.domain.QPost(forProperty("post"), inits.get("post")) : null;
     }
 
 }
