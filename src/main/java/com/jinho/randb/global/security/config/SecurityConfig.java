@@ -50,7 +50,7 @@ public class SecurityConfig {
         http
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/**", "/api-docs/**").permitAll()
                         .requestMatchers("/signup","/login*", "/").permitAll()
                         .requestMatchers("/main").permitAll()
                         .requestMatchers("/user").hasAuthority("ROLE_USER")
@@ -85,9 +85,10 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/*").permitAll()
-                        .requestMatchers("api/signup","api/login*","rest/main","/").permitAll()// /main 경로는 로그인 없이 접근 허용
-                        .requestMatchers("/main","/posts").permitAll() // /main 경로는 모두 접근 가능
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/**","/api-docs/**").permitAll()
+                        .requestMatchers("/signup","api/login*","rest/main","/").permitAll()// /main 경로는 로그인 없이 접근 허용
+                        .requestMatchers("/main","/posts", "/signup").permitAll() // /main 경로는 모두 접근 가능
+                        .requestMatchers(HttpMethod.POST,"/api/join").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/posts").hasAuthority("ROLE_USER")  // 게시물 작성은 ROLE_USER 권한 필요
                         .requestMatchers(HttpMethod.POST, "/api/user/opinions").hasAuthority("ROLE_USER") //의견작성은 ROLE_USER 권한 필요
                         .requestMatchers("/api/user").hasAuthority("ROLE_USER")

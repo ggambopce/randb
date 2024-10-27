@@ -3,6 +3,7 @@ package com.jinho.randb.domain.post.application;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.account.dto.AccountContext;
+import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
@@ -35,8 +36,8 @@ public class PostServiceImpl implements PostService {
     public void save(UserAddRequest userAddRequest) {
         // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AccountContext accountContext = (AccountContext) authentication.getPrincipal();
-        Long accountId = accountContext.getAccountDto().getId();  // 로그인된 사용자의 accountId 가져오기
+        AccountDto accountDto = (AccountDto) authentication.getPrincipal();
+        Long accountId = accountDto.getId();  // 로그인된 사용자의 accountId 가져오기
 
 
         Optional<Account> op_account = accountRepository.findById(accountId);

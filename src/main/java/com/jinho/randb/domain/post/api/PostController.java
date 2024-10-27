@@ -119,13 +119,13 @@ public class PostController {
                             examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
     })
     @GetMapping("/api/user/detail/posts/{post-id}")
-    public ResponseEntity<?> getdetail(@PathVariable("post-id") long postId) {
+    public ResponseEntity<?> getDetail(@PathVariable("post-id") long postId) {
         PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
 
         // 로그인된 사용자 정보 확인
         boolean isAuthor = false;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
+        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof PrincipalDetails) {
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
             String currentUsername = principalDetails.getUsername();
 
@@ -133,13 +133,10 @@ public class PostController {
             isAuthor = postDetailResponse.getPost().getUsername().equals(currentUsername);
         }
 
-        System.out.println("현재 로그인 사용자: " + (authentication != null ? authentication.getName() : "비로그인"));
-        System.out.println("게시글 작성자: " + postDetailResponse.getPost().getUsername());
-        System.out.println("isAuthor: " + isAuthor);
-
-        // isAuthor 값 설정
+        // isAuthor 값을 PostDetailResponse에 추가
         postDetailResponse.setAuthor(isAuthor);
 
+        // JSON 형식의 응답 반환
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postDetailResponse));
     }
 

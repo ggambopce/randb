@@ -3,6 +3,7 @@ package com.jinho.randb.domain.opinion.application;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.account.dto.AccountContext;
+import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.opinion.dao.OpinionRepository;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
@@ -38,8 +39,8 @@ public class OpinionServiceImpl implements OpinionService {
     public Opinion save(AddOpinionRequest addOpinionRequest) {
         // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AccountContext accountContext = (AccountContext) authentication.getPrincipal();
-        Long accountId = accountContext.getAccountDto().getId();  // 로그인된 사용자의 accountId 가져오기
+        AccountDto accountDto = (AccountDto) authentication.getPrincipal();
+        Long accountId = accountDto.getId();  // 로그인된 사용자의 accountId 가져오기
 
         Long postId = addOpinionRequest.getPostId();
 

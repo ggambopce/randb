@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @OpenAPIDefinition(
         info = @Info(title = "Red & Blue API 명세서",
                 description = "백엔드 API 서버",
-                version = "v1")
+                version = "v2")
 )
 @Configuration
 public class SwaggerConfig {
@@ -33,7 +33,7 @@ public class SwaggerConfig {
         String[] paths = {"/api/**"};
 
         return GroupedOpenApi.builder()
-                .group("Red and Blue API v1")
+                .group("Red and Blue API v2")
                 .pathsToMatch(paths)
                 .build();
     }

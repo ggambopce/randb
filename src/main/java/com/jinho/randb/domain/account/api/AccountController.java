@@ -24,7 +24,7 @@ public class AccountController {
 
         accountService.signup(accountDto);
 
-        return "redirect:/";
+        return "redirect:/main";
     }
 
 
