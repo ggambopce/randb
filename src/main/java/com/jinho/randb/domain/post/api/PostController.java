@@ -2,9 +2,7 @@ package com.jinho.randb.domain.post.api;
 
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
-import com.jinho.randb.domain.post.dto.user.PostResponse;
-import com.jinho.randb.domain.post.dto.user.UserAddRequest;
-import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,30 +50,29 @@ public class PostController {
         return ResponseEntity.ok(new ControllerApiResponse(true, "작성 성공"));
     }
 
-    @Operation(summary = "전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
+    @Operation(summary = "전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.(페이지네이션)", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = Post.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
     })
     @GetMapping("/api/posts")
-    public ResponseEntity<?> findAllPost() {
-        List<Post> posts = postService.findAll();
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", posts));
+    public ResponseEntity<?> findAllPost(Long postId, Pageable pageable) {
+        PostResponse postResponse = postService.postPage(postId, pageable);
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
     }
 
-    @Operation(summary = "토론글 검색 API(페이지네이션)", description = "모든 사용자가 해당 게시글의 페이지를 볼 수 있음", tags = {"일반 사용자 토론글 컨트롤러"})
+    @Operation(summary = "메인페이지 전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = Post.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
     })
-    @GetMapping("/api/search/posts")
-    public ResponseEntity<?> findAllPosts(@RequestParam(value = "post-id", required = false) Long postId, Pageable pageable) {
-        PostResponse postResponse = postService.postPage(postId, pageable);
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
+    @GetMapping("/api/main/posts")
+    public ResponseEntity<?> mainPagePost() {
+        MainPagePostResponse mainPagePostResponse = postService.mainPagePost();
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", mainPagePostResponse));
     }
-
 
 
     @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
@@ -91,6 +88,21 @@ public class PostController {
     public ResponseEntity<?> findPost(@PathVariable("post-id") long id) {
         Optional<Post> post = postService.findById(id);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", post));
+    }
+
+    @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = Post.class),
+                            examples = @ExampleObject(value = "{\"success\":true,\"message\":\"조회성공\",\"data\":{\"post\":{\"id\":3,\"postTitle\":\"토론 주제\",\"postContent\":\"토론 내용입니다!\"}}}"))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                            examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
+    })
+    @GetMapping("/api/user/detail/posts/{post-id}")
+    public ResponseEntity<?> getdetail(@PathVariable("post-id") long postId) {
+        PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postDetailResponse));
     }
 
     @Operation(summary = "토론글 삭제 API",description = "삭제시 해당 게시물과 관련된 데이터는 모두 삭제",tags = {"일반 사용자 토론글 컨트롤러"})

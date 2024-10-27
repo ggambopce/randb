@@ -33,7 +33,6 @@ public class Opinion {
     private LocalDateTime updated_at;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
     @Schema(hidden = true)
     @JoinColumn(name = "post_id")
     private Post post;

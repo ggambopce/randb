@@ -3,9 +3,7 @@ package com.jinho.randb.domain.post.application;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
-import com.jinho.randb.domain.post.dto.user.PostResponse;
-import com.jinho.randb.domain.post.dto.user.UserAddRequest;
-import com.jinho.randb.domain.post.dto.user.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +27,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void save(UserAddRequest userAddRequest) {
 
+        // DTO -> domain 변환
         Post post = Post.builder()
                 .postTitle(userAddRequest.getPostTitle())
                 .postContent(userAddRequest.getPostContent())
@@ -44,23 +43,37 @@ public class PostServiceImpl implements PostService {
         return postRepository.findById(id);
     }
 
+    /**
+     * 레시피의 상세정보를 보는 로직,
+     * @param postId  찾을 토론글 번호
+     * @return      Response로 변환해 해당 토론글의 상세 정보를 반환
+     */
+    @Override
+    public PostDetailResponse getPostDetail(Long postId) {
+        PostDto postDetail = postRepository.getPostDetail(postId);
+        return PostDetailResponse.of(postDetail.toDto());
+    }
+
     @Override
     public List<Post> findAll() {
         return postRepository.findAll();
     }
 
-    /**
-     * 게시글의모든 데이터를 무한 페이징 최신순으로 내림차순
-     * @param pageable
-     * @return
-     */
     @Override
     public PostResponse postPage(Long postId, Pageable pageable) {
 
         Slice<PostDto> allPost = postRepository.getAllPost(postId, pageable);
 
-        return new PostResponse(allPost.hasNext(), allPost.getContent());
+        return new PostResponse(allPost.hasNext(),allPost.getContent());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MainPagePostResponse mainPagePost() {
+        List<PostDto> postDtoList = postRepository.mainPagePost();
+        return MainPagePostResponse.of(postDtoList);
+    }
+
 
     @Override
     public void delete(Long postId) {
