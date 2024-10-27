@@ -20,18 +20,13 @@ public class LoginController {
                         @RequestParam(value = "exception", required = false) String exception, Model model){
         model.addAttribute("error",error);
         model.addAttribute("exception",exception);
-        return "login/login";
-    }
-
-    @GetMapping(value="/api/login")
-    public String restlogin(){
-        return "rest/login";
+        return "/login";
     }
 
     @GetMapping(value = "/signup")
     public String signup() {
 
-        return "login/signup";
+        return "/signup";
     }
 
     @GetMapping(value = "/logout")
@@ -40,7 +35,7 @@ public class LoginController {
         if(authentication != null){
             new SecurityContextLogoutHandler().logout(request,response,authentication);
         }
-        return  "redirect:/login";
+        return  "redirect:api/login";
     }
 
     @GetMapping(value="/denied")
@@ -49,6 +44,12 @@ public class LoginController {
         model.addAttribute("username", accountDto.getUsername());
         model.addAttribute("exception", exception);
 
-        return "login/denied";
+        return "/denied";
+    }
+
+    @GetMapping(value="api/login")
+    public String restlogin(){
+
+        return "rest/rlogin";
     }
 }

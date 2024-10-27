@@ -22,16 +22,18 @@ public class PostDto {
 
     private String postContent;
 
+    private String username;
+
     public PostDto toDto() {
-        return new PostDto(id, postTitle, postContent);
+        return new PostDto(id, postTitle, postContent, username);
     }
     // 정적 팩토리 메서드
     public static PostDto from(Long id, String postTitle, String postContent){
-        return new PostDto(id, postTitle, postContent);
+        return new PostDto(id, postTitle, postContent, null);
     }
 
     public static PostDto of(Post post){
-        return new PostDto(post.getId(), post.getPostTitle(), post.getPostContent());
+        return new PostDto(post.getId(), post.getPostTitle(), post.getPostContent(), post.getAccount().getUsername());
     }
 
 

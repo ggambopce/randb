@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -38,13 +39,20 @@ public class SecurityConfig {
     private final RestAuthenticationFailureHandler restFailureHandler;
 
     @Bean
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
+        return authenticationManagerBuilder.build();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
-                        .requestMatchers("/signup","/login*").permitAll()
-                        .requestMatchers("/").hasAuthority("ROLE_USER")
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/**", "/api-docs/**").permitAll()
+                        .requestMatchers("/signup","/login*", "/").permitAll()
+                        .requestMatchers("/main").permitAll()
                         .requestMatchers("/user").hasAuthority("ROLE_USER")
                         .requestMatchers("/manager").hasAuthority("ROLE_MANAGER")
                         .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
@@ -76,13 +84,19 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();            // build() 는 최초 한번 만 호출해야 한다
 
         http
-                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/**","/api-docs/**").permitAll()
+                        .requestMatchers("/signup","api/login*","rest/main","/").permitAll()// /main 경로는 로그인 없이 접근 허용
+                        .requestMatchers("/main","/posts", "/signup").permitAll() // /main 경로는 모두 접근 가능
+                        .requestMatchers(HttpMethod.POST,"/api/join").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/posts").hasAuthority("ROLE_USER")  // 게시물 작성은 ROLE_USER 권한 필요
+                        .requestMatchers(HttpMethod.POST, "/api/user/opinions").hasAuthority("ROLE_USER") //의견작성은 ROLE_USER 권한 필요
                         .requestMatchers("/api/user").hasAuthority("ROLE_USER")
                         .requestMatchers("/api/manager").hasAuthority("ROLE_MANAGER")
                         .requestMatchers("/api/admin").hasAuthority("ROLE_ADMIN")
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated()
+                )
+
                 //.csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)

@@ -9,6 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -25,6 +27,7 @@ public class AccountServiceImpl implements AccountService{
                 .username(accountDto.getUsername())
                 .password(passwordEncoder.encode(accountDto.getPassword()))
                 .roles(accountDto.getRoles())
+                .join_date(LocalDate.now())
                 .build();
 
         accountRepository.save(account);

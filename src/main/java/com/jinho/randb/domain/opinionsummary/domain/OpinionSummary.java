@@ -22,7 +22,8 @@ public class OpinionSummary {
     @Column(name= "opinion_summary_id", updatable = false)
     private Long id;
 
-    @Column(name = "opinion_summary_content", nullable = false)
+    @Lob
+    @Column(name = "opinion_summary_content", length = 1000, nullable = false)
     private String opinionSummaryContent;
 
     @Enumerated(EnumType.STRING)

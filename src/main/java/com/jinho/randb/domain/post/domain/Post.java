@@ -1,5 +1,7 @@
 package com.jinho.randb.domain.post.domain;
 
+import com.jinho.randb.domain.account.domain.Account;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +33,11 @@ public class Post {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Schema(hidden = true)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     public void update(String postTitle, String postContent){
         this.postTitle = postTitle;

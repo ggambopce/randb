@@ -3,8 +3,12 @@ package com.jinho.randb.domain.opinion.api;
 import com.jinho.randb.domain.opinion.application.OpinionService;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
+import com.jinho.randb.domain.opinion.dto.OpinionContentAndTypeDto;
+import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
+import com.jinho.randb.domain.opinion.exception.OpinionException;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,19 +22,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.openai.OpenAiChatModel;
-import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerErrorException;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping
 @OpenAPIDefinition(tags = {
         @Tag(name = "일반 사용자 의견 컨트롤러", description = "일반 사용자 의견 관련 작업")
 })
@@ -48,23 +50,35 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "[{\"success\":false,\"message\":\"의견을 입력해주세요\"}, {\"success\":false,\"message\":\"회원정보나 게시글을 찾을수 없습니다.\"}]"))),
     })
-    @PostMapping("/user/opinions")
-    public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest){
+    @PostMapping("/api/user/opinions")
+    public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest, BindingResult bindingResult){
 
-        opinionService.save(addOpinionRequest);
+        try {
+            if (bindingResult.hasErrors()){
+                return ResponseEntity.badRequest().body(new ErrorResponse<>(false, bindingResult.getFieldError().getDefaultMessage()));
+            }
+            Opinion save = opinionService.save(addOpinionRequest);
 
-        return ResponseEntity.ok(new ControllerApiResponse(true,"작성 성공"));
+            AddOpinionRequest addResponse = new AddOpinionRequest(save.getOpinionContent(), save.getOpinionType(), save.getAccount().getId(), save.getAccount().getUsername(), save.getPost().getId(), save.getCreated_at());
+            return ResponseEntity.ok(new ControllerApiResponse(true,"성공", addResponse));
+
+        }catch (NoSuchElementException e){
+            throw new OpinionException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ServerErrorException("서버오류", e);
+        }
     }
 
-    @Operation(summary = "의견 전체 조회 API", description = "의견의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
+    @Operation(summary = "의견 전체 조회 API", description = "해당 토론글의 의견을 모두 조회", tags = {"일반 사용자 의견 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = Post.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"opinions\":[{\"id\":23, \"opinionContent\" : \"이것은 의견의 내용입니다.\"}]}")))
     })
-    @GetMapping("/opinions")
-    public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = false)Long postId) {
-        List<Opinion> opinions = opinionService.findByPostId(postId);
+    @GetMapping("/api/opinions")
+    public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = true)Long postId) {
+        List<OpinionContentAndTypeDto> opinions = opinionService.findByPostId(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", opinions));
     }
 
@@ -81,7 +95,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"작성자만 삭제할수 있습니다.\"}")))
     })
-    @DeleteMapping("/user/opinions/{opinion-id}")
+    @DeleteMapping("/api/user/opinions/{opinion-id}")
     public ResponseEntity<?> deleteOpinion(@PathVariable("opinion-id") Long opinionId){
         opinionService.delete(opinionId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "게시글 삭제 성공"));
@@ -99,7 +113,7 @@ public class OpinionController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"작성자만 수정할 수 있습니다.\"}")))
     })
-    @PostMapping("/user/update/opinions/{opinion-id}")
+    @PostMapping("/api/user/update/opinions/{opinion-id}")
     public ResponseEntity<?> updateOpinion(@Valid @RequestBody UserUpdateOpinionDto userUpdateOpinionDto, @PathVariable("opinion-id") Long opinionId){
 
         opinionService.update(opinionId,userUpdateOpinionDto);

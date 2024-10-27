@@ -1,5 +1,9 @@
 package com.jinho.randb.domain.post.application;
 
+import com.jinho.randb.domain.account.dao.AccountRepository;
+import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.domain.account.dto.AccountContext;
+import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
@@ -8,9 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -23,21 +30,37 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public void save(UserAddRequest userAddRequest) {
+        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AccountDto accountDto = (AccountDto) authentication.getPrincipal();
+        Long accountId = accountDto.getId();  // 로그인된 사용자의 accountId 가져오기
 
-        // DTO -> domain 변환
-        Post post = Post.builder()
-                .postTitle(userAddRequest.getPostTitle())
-                .postContent(userAddRequest.getPostContent())
-                .createdAt(LocalDateTime.now())
-                .build();
 
-        postRepository.save(post);
+        Optional<Account> op_account = accountRepository.findById(accountId);
+
+        if (op_account.isPresent()) {
+            Account account = op_account.get();
+            // DTO -> domain 변환
+            Post post = Post.builder()
+                    .postTitle(userAddRequest.getPostTitle())
+                    .postContent(userAddRequest.getPostContent())
+                    .account(account)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            postRepository.save(post);
+
+        } else {
+
+            throw new NoSuchElementException("토론글 저장에 실패했습니다.");
+
+        }
+
     }
-
-
     @Override
     public Optional<Post> findById(Long id) {
         return postRepository.findById(id);
@@ -76,15 +99,20 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void delete(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을수 없습니다."));
-        postRepository.deleteById(post.getId());
+    public void delete(String username, Long postId) {
 
+        Account account = accountRepository.findByUsername(username);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을수 없습니다."));
+        if(!post.getAccount().getUsername().equals(account.getUsername())) throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
+
+        postRepository.deleteAccountId(account.getId(), postId);
     }
 
     @Override
-    public void update(Long postId, UserUpdateRequest userUpdatePostDto) {
+    public void update(Long postId, UserUpdateRequest userUpdatePostDto, String username) {
+
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
+        if(!post.getAccount().getUsername().equals(username)) throw new AccessDeniedException("작성자만 수정 가능합니다.");
 
         post.update(userUpdatePostDto.getPostTitle(), userUpdatePostDto.getPostContent());
 

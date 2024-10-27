@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.jinho.randb.domain.account.domain.QAccount.account;
 import static com.jinho.randb.domain.post.domain.QPost.*;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     /**
-     * 해당 id 토론글 데이터를 가져와서 RecipeDto로 변환
+     * 해당 id 토론글 데이터를 가져와서 PostDto로 변환
      * @param postId
      * @return postDTO
      */
@@ -36,6 +37,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
         Post postDetail = jpaQueryFactory
                 .selectFrom(post)
+                .leftJoin(post.account).fetchJoin()  // account와 조인하여 작성자 정보도 가져옴
                 .where(post.id.eq(postId))
                 .fetchOne();
 
@@ -63,15 +65,21 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         }
 
         // QueryDSL을 사용하여 동적 쿼리 실행 및 페이징 처리
-        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.createdAt)
+        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.createdAt, account.username)
                 .from(post)
+                .leftJoin(post.account, account) // post.account와 account를 조인
+                .where(builder)
                 .orderBy(post.createdAt.desc())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
 
         // Tuple 데이터를 PostDto로 변환하여 리스트로 수집
         List<PostDto> collect = list.stream()
-                .map(tuple -> new PostDto(tuple.get(post.id),tuple.get(post.postTitle),tuple.get(post.postContent))).collect(Collectors.toList());
+                .map(tuple -> new PostDto(tuple.get(post.id),
+                        tuple.get(post.postTitle),
+                        tuple.get(post.postContent),
+                        tuple.get(account.username)))   // username 추가
+                .collect(Collectors.toList());
 
         // 다음 페이지가 있는지 확인
         boolean hasNext = isHasNextSize(pageable, collect);
