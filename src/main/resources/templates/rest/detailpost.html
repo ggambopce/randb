@@ -372,7 +372,7 @@
             .then(response => response.json())
             .then(data => {
                 const summaryDiv = document.getElementById('opinionSummary');
-                summaryDiv.innerHTML = `<strong>요약 결과:</strong><br> RED: ${data.data.RED}<br>BLUE: ${data.data.BLUE}`;
+                summaryDiv.innerHTML = `<strong>요약 결과</strong><br><br> RED 의견 : ${data.data.RED}<br><br>BLUE 의견  : ${data.data.BLUE}`;
             })
             .catch(error => console.error('Error fetching summary:', error));
     });
