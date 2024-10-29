@@ -35,9 +35,14 @@
 <img src="https://img.shields.io/badge/Spring-58CC02?style=flat-square&logo=Spring&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=Spring Boot&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/Spring Data JPA-ECD53F?style=flat-square&logo=JPA&logoColor=white"/></img>
-<img src="https://img.shields.io/badge/Query_DSL-0769AD?style=flat-square&logo=querydsl&logoColor=white"/></img>
 <img src="https://img.shields.io/badge/JUnit5-25A162?style=flat-square&logo=JUnit5&logoColor=white"/></img>
 </p>
+
+<h3 align="center"> 보안 </h3>
+<p align="center">
+<img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=Spring Security&logoColor=white"/></img>
+<img src="https://img.shields.io/badge/OAuth2.0-EB5424?style=flat-square&logo=querydsl&logoColor=white"/></img>
+<img src="https://img.shields.io/badge/JWT-6DB33F?style=flat-square&logo=JsonWebTokens&logoColor=white"/></img>
 
 <h3 align="center"> DB </h3>
 
