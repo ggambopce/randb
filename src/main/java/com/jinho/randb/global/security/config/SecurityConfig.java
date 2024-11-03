@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -20,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+
 
 
 @Configuration
@@ -82,8 +84,37 @@ public class SecurityConfig {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    @Order(1)
+    public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception {
+
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();            // build() 는 최초 한번 만 호출해야 한다
+
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*","/swagger-ui/**","/api-docs/**").permitAll()
+                        .requestMatchers("/signup","api/login*","rest/main","/").permitAll()// /main 경로는 로그인 없이 접근 허용
+                        .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/main","/posts", "/signup").permitAll() // /main 경로는 모두 접근 가능
+                        .requestMatchers(HttpMethod.POST,"/api/join").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user/posts").hasAuthority("ROLE_USER")  // 게시물 작성은 ROLE_USER 권한 필요
+                        .requestMatchers(HttpMethod.POST, "/api/user/opinions").hasAuthority("ROLE_USER") //의견작성은 ROLE_USER 권한 필요
+                        .requestMatchers("/api/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/manager").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/admin").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
+                )
+
+                .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
+                .authenticationManager(authenticationManager)
+                .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                    .accessDeniedHandler(new RestAccessDeniedHandler())
+                )
+        ;
+        return http.build();
     }
 
     @Bean
