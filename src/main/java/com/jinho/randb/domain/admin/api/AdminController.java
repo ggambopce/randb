@@ -31,9 +31,23 @@ public class AdminController {
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
                             examples = @ExampleObject(value = "{\"success\": true, \"message\":\"조회 성공\", \"data\":\"10\"}"))),
     })
-    @GetMapping("/api/accounts/count")
+    @GetMapping("/api/admin/accounts/count")
     public ResponseEntity<?> getAccountsCount(){
         long searchAccountsCount = adminService.searchAcountCount();
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회 성공", searchAccountsCount));
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "회원 수 조회 성공", searchAccountsCount));
     }
+
+    @Operation(summary = "게시글수 조회 API", description = "작성된 게시글의 수를 조회하는 API")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\":\"조회 성공\", \"data\":\"10\"}"))),
+    })
+    @GetMapping("/api/admin/posts/count")
+    public ResponseEntity<?> getPostsCount(){
+        long serarchPostsCount = adminService.searchPostCount();
+        return ResponseEntity.ok(new ControllerApiResponse<>(true,"토론글 수 조회 성공", serarchPostsCount));
+    }
+
+
 }
