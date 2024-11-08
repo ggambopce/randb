@@ -37,7 +37,7 @@ public class AdminController {
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "회원 수 조회 성공", searchAccountsCount));
     }
 
-    @Operation(summary = "게시글수 조회 API", description = "작성된 게시글의 수를 조회하는 API")
+    @Operation(summary = "게시글수 조회 API", description = "작성된 토론글의 수를 조회하는 API")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
