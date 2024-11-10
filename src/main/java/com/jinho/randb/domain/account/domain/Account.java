@@ -22,6 +22,11 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long id;
+
+    String loginId;
+    String email;
+    String login_type;
+
     @Column(name = "username")
     private String username;
     @Column(name = "password")
@@ -30,6 +35,8 @@ public class Account {
     private String roles;
 
     LocalDate join_date;
+    private boolean verified;
+
 
     @Builder.Default
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true)
