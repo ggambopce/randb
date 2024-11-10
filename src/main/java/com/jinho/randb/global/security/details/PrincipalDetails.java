@@ -5,11 +5,13 @@ import com.jinho.randb.domain.account.dto.AccountDto;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
+import java.util.Map;
 
 @Data
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private Account account;
 
@@ -19,6 +21,11 @@ public class PrincipalDetails implements UserDetails {
 
     public AccountDto getAccountDto(Account account) {
         return AccountDto.from(account);
+    }
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
     }
 
     @Override
@@ -54,5 +61,10 @@ public class PrincipalDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }
