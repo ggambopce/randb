@@ -7,7 +7,7 @@ import com.jinho.randb.domain.post.exception.PostException;
 import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.exception.ex.BadRequestException;
 import com.jinho.randb.global.payload.ControllerApiResponse;
-import com.jinho.randb.global.security.details.PrincipalDetails;
+import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

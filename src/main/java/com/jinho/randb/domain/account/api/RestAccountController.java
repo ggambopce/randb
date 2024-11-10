@@ -5,7 +5,6 @@ import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.exception.ex.BadRequestException;
 import com.jinho.randb.global.payload.ControllerApiResponse;
-import com.jinho.randb.global.security.provider.RestAuthenticationProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -20,13 +19,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -47,7 +44,6 @@ import java.util.Map;
 public class RestAccountController {
 
     private final AccountService accountService;
-    private final AuthenticationManager authenticationManager;
 
     @Operation(summary = "회원가입", description = "사용자가 회원가입합니다.")
     @ApiResponses(value = {
@@ -135,8 +131,6 @@ public class RestAccountController {
             UsernamePasswordAuthenticationToken token =
                     new UsernamePasswordAuthenticationToken(accountDto.getUsername(), accountDto.getPassword());
 
-            Authentication authentication = authenticationManager.authenticate(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // 세션 생성 및 보안 컨텍스트 저장
             HttpSession session = request.getSession(true); // 세션이 없으면 새로 생성
