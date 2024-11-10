@@ -2,7 +2,7 @@ package com.jinho.randb.global.security.oauth2;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
-import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
+import com.jinho.randb.global.security.details.PrincipalDetails;
 import com.jinho.randb.global.security.oauth2.provider.GoogleUserInfo;
 import com.jinho.randb.global.security.oauth2.provider.NaverUserInfo;
 import com.jinho.randb.global.security.oauth2.provider.Oauth2UserInfo;
@@ -32,8 +32,9 @@ public class CustomOauth2Service extends DefaultOAuth2UserService {
 
         String requestId = userRequest.getClientRegistration().getRegistrationId();  // 요청한 oath2 사이트 회사명
 
-        log.info("reWho={}",requestId);
-        Oauth2UserInfo oauth2UserInfo = null;
+
+        log.info("reee={}",requestId);
+        Oauth2UserInfo oauth2UserInfo =null;
         Account account = null;
 
          if (requestId.equals("google")) {
@@ -41,7 +42,8 @@ public class CustomOauth2Service extends DefaultOAuth2UserService {
             account = save(oauth2UserInfo.getId(), oauth2UserInfo.getName(), oauth2UserInfo.getEmail(), requestId);
         } else if (requestId.equals("naver")) {
             oauth2UserInfo = new NaverUserInfo(attributes);
-            log.info("inaver={}",oauth2UserInfo.getId());
+
+            log.info("aaa={}",oauth2UserInfo.getId());
             account = save(oauth2UserInfo.getId(), oauth2UserInfo.getName(), oauth2UserInfo.getEmail(), requestId);
         }
         return new PrincipalDetails(account);
@@ -50,7 +52,7 @@ public class CustomOauth2Service extends DefaultOAuth2UserService {
     /**
      * oauth2 로그인시에 사용되는 메소드 만약 이전의 로그인한 사용자가 있다면 email정보만 업데이트
      * 만약 로그인한 정보가 없다면 자동으로 회원가입 진행
-     * @return account 객체 반환
+
      */
     private Account save(String id, String name, String email, String requestId) {
         Account account = accountRepository.findByLoginId(id);

@@ -24,12 +24,8 @@ public class Account {
     @Column(name = "account_id")
     private Long id;
 
-    @Column(unique = true)
     String loginId;
     String email;
-    @JsonIgnore
-    @Column(nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
-    String roles;
     String login_type;
 
     @Column(name = "username")
@@ -38,6 +34,8 @@ public class Account {
     private String password;
 
     LocalDate join_date;
+    private boolean verified;
+
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;
