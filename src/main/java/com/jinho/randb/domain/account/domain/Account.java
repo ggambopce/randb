@@ -34,6 +34,8 @@ public class Account {
     private String password;
 
     LocalDate join_date;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;
 
 
