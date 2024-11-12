@@ -2,13 +2,17 @@ package com.jinho.randb.global.jwt.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.global.exception.ex.JwtTokenException;
 import com.jinho.randb.global.jwt.entity.RefreshToken;
 import com.jinho.randb.global.jwt.repository.JWTRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -90,6 +94,70 @@ public class JwtProvider {
         return refreshToken;
     }
 
+    /**
+     * JWT 토큰의 만료를 검증하는 메소드
+     *
+     * @param token
+     * @return 만료된 토큰 이면 ture 만려되지 않았다면 false
+     */
+    public Boolean TokenExpiration(String token) {
 
+        DecodedJWT decodedJWT = JWT.decode(token);
+        Date expiresAt = decodedJWT.getExpiresAt();
+        if (expiresAt != null && expiresAt.before(new Date())) {
+            return true;
+        } else
+            return false;
+    }
 
+    /**
+     * 토큰을 검증하는 메서드
+     * @param token
+     * @return
+     */
+
+    public String validateAccessToken(String token) {
+
+        try {
+            String loginId = JWT.require(Algorithm.HMAC512(secret)).build()
+                    .verify(token)
+                    .getClaim("loginId")
+                    .asString();
+
+            return loginId;
+        } catch (SignatureVerificationException e) {
+            log.error("존재하지 않은 토큰 사용");
+            throw new JwtTokenException("토큰이 존재하지 않습니다.");
+        }
+    }
+
+    public String validateRefreshToken(String refreshToken) {
+        try {
+            DecodedJWT decodedJWT = JWT.decode(refreshToken);
+
+            String loginId = decodedJWT.getClaim("loginId").asString();
+
+            RefreshToken rerefreshToken = jwtRefreshTokenRepository.findByRefreshToken(refreshToken);
+            if (refreshToken == null) throw new JwtTokenException("토큰이 존재하지 않습니다.");
+
+            Boolean isTokenTIme = TokenExpiration(refreshToken);
+
+            if (loginId.equals(rerefreshToken.getAccount().getLoginId()) && !isTokenTIme) {
+                String token = generateAccessToken(rerefreshToken.getAccount().getLoginId());
+                return token;
+            } else
+                return null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new JwtTokenException("잘못된 토큰 형식입니다.");
+        }
+    }
+
+    private Account getAccount(Authentication authentication) {
+        String name = authentication.getName();
+
+        Account account = accountRepository.findByLoginId(name);
+        return account;
+    }
 }

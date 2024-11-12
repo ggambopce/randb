@@ -1,17 +1,23 @@
 package com.jinho.randb.global.security.config;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
+import com.jinho.randb.global.jwt.utils.JwtAuthorizationFilter;
+import com.jinho.randb.global.jwt.utils.JwtLoginFilter;
+import com.jinho.randb.global.jwt.utils.JwtProvider;
 import com.jinho.randb.global.security.oauth2.CustomOauth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -21,9 +27,13 @@ public class SecurityConfig {
 
     private final AccountRepository accountRepository;
     private final CustomOauth2Service customOAuth2Service;
+    private final JwtProvider jwtProvider;
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
+
+        // AuthenticationManager 가져오기
+        AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
@@ -47,12 +57,26 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+
+
+        // 필터 설정: JWT 인증 및 인가 필터 추가
+        http
+                .addFilterBefore(new JwtLoginFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager, accountRepository, jwtProvider), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
 }
