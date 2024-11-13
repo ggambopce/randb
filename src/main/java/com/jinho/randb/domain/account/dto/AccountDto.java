@@ -25,6 +25,7 @@ public class AccountDto {
     Long id;
 
     @NotEmpty(message = "이름을 입력주세요")
+    @Pattern(regexp = "^[가-힣]+.{1,}$",message = "이름을 정확이 입력해주세요")
     @Schema(description = "사용자 실명",example = "홍길동")
     String username;
 
@@ -32,12 +33,36 @@ public class AccountDto {
     @Schema(description = "비밀번호",example = "1234")
     String password;
 
-    @Schema(description = "ROLE_USER",example = "ROLE_USER")
+    @NotEmpty(message = "별명을 입력해주세요")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{4,}$",message = "사용할수 없는 별명입니다.")
+    @Schema(description = "사용자의 별명",example = "나만냉")
+    String nickname;
+
+    @NotEmpty(message = "아이디를 입력해주세요")
+    @Pattern(regexp = "^[a-zA-Z0-9]{5,16}$", message = "올바른 아이디를 입력해주세요")
+    @Schema(description = "로그인 아이디",example = "exampleId")
+    String loginId;
+
+    @NotEmpty(message = "이메일을 입력해주세요.")
+    @Pattern(regexp = "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.(com|net)$", message = "올바른 이메일 형식이어야 합니다.")
+    @Schema(description = "이메일",example = "test@naver.com")
+    String email;
+
+    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String roles;
 
     @JsonIgnore
     @JsonInclude(JsonInclude.Include.NON_NULL)
     LocalDate join_date;
+
+    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String login_type;
+
+    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private boolean verified;
 
     public Account toEntity(AccountDto accountDto) {
         return Account.builder()
@@ -49,23 +74,30 @@ public class AccountDto {
                 .build();
     }
 
-    private AccountDto(Long accountId, String username, String roles, LocalDate join_date) {
+    private AccountDto(Long accountId, String loginId, String email, String username, String nickname, LocalDate join_date) {
         this.id = accountId;
+        this.loginId = loginId;
+        this.email = email;
         this.username = username;
-        this.roles = roles;
+        this.nickname = nickname;
         this.join_date = join_date;
     }
 
     public static AccountDto from(Account account) {
         return AccountDto.builder()
                 .id(account.getId())
+                .loginId(account.getLoginId())
                 .username(account.getUsername())
+                .nickname(account.getNickname())
                 .password(account.getPassword())
-                .roles(account.getRoles()).build();
+                .email(account.getEmail())
+                .roles(account.getRoles())
+                .login_type(account.getLogin_type())
+                .build();
     }
 
-    public static AccountDto of(Long accountId, String username, String roles, LocalDate join_date) {
-        return new AccountDto(accountId, username, roles, join_date);
+    public static AccountDto of(Long accountId, String loginId, String email, String username, String nickname, LocalDate join_date) {
+        return new AccountDto(accountId, loginId, email, username, nickname, join_date);
     }
 
 }
