@@ -101,61 +101,6 @@ public class RestAccountController {
         }
     }
 
-
-    @Operation(summary = "로그인", description = "사용자가 세션을 통해 로그인합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 성공",
-                    content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
-                            examples = @ExampleObject(value = "{\"success\": true, \"message\": \"로그인 성공\"}"))),
-            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
-                            examples = @ExampleObject(value = "{\"success\":false,\"message\":\"로그인 실패: 자격 증명이 유효하지 않습니다.\"}"))),
-            @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @PostMapping("/api/login")
-    public ResponseEntity<?> login(@Valid @RequestBody AccountDto accountDto, BindingResult result, HttpServletRequest request) {
-        try {
-            if (result.hasErrors()) {
-                Map<String, String> errorMap = new HashMap<>();
-                for (FieldError error : result.getFieldErrors()) {
-                    errorMap.put(error.getField(), error.getDefaultMessage());
-                }
-                ControllerApiResponse<Object> failResponse = ControllerApiResponse.builder()
-                        .success(false)
-                        .message("실패")
-                        .data(errorMap).build();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(failResponse);
-            }
-            // 로그인 처리 로직
-            UsernamePasswordAuthenticationToken token =
-                    new UsernamePasswordAuthenticationToken(accountDto.getUsername(), accountDto.getPassword());
-
-
-            // 세션 생성 및 보안 컨텍스트 저장
-            HttpSession session = request.getSession(true); // 세션이 없으면 새로 생성
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
-
-            // 세션 ID를 클라이언트에 반환 (세션 토큰으로 사용할 수 있음)
-            String sessionId = session.getId();
-
-            ControllerApiResponse<Object> response = ControllerApiResponse.builder()
-                    .success(true)
-                    .message("로그인 성공")
-                    .data(sessionId)  // 세션 ID를 클라이언트로 반환하여 세션 토큰으로 사용
-                    .build();
-            return ResponseEntity.ok(response);
-
-            }catch (BadRequestException e){
-                throw new BadRequestException(e.getMessage());
-            }catch (AccessDeniedException e){
-                throw new AccessDeniedException(e.getMessage());
-            }
-        catch (Exception e){
-                e.printStackTrace();
-                throw new ServerErrorException(e.getMessage(),e);
-            }
-    }
     @Operation(summary = "로그아웃", description = "사용자가 세션을 통해 로그아웃합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그아웃 성공",
