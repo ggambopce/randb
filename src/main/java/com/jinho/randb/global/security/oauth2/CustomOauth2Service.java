@@ -54,7 +54,11 @@ public class CustomOauth2Service extends DefaultOAuth2UserService {
     /**
      * oauth2 로그인시에 사용되는 메소드 만약 이전의 로그인한 사용자가 있다면 email정보만 업데이트
      * 만약 로그인한 정보가 없다면 자동으로 회원가입 진행
+<<<<<<< HEAD
 
+=======
+     * @return account 객체 반환
+>>>>>>> ae215da (JWT 컨트롤러 구현)
      */
     private Account save(String id, String name, String email, String requestId) {
         Account account = accountRepository.findByLoginId(id);
