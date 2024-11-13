@@ -1,5 +1,6 @@
 package com.jinho.randb.domain.account.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.post.domain.Post;
 import jakarta.persistence.*;
@@ -25,14 +26,15 @@ public class Account {
 
     String loginId;
     String email;
+    String nickname;
+    @JsonIgnore
+    String roles;
     String login_type;
 
     @Column(name = "username")
     private String username;
     @Column(name = "password")
     private String password;
-    @Column(name = "roles")
-    private String roles;
 
     LocalDate join_date;
 
