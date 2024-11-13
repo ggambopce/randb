@@ -18,6 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -41,6 +46,9 @@ public class SecurityConfig {
         //From 로그인 방식 disable
         http
                 .formLogin((auth) -> auth.disable());
+        // cors 설정
+        http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())); // CORS 설정 적용
         //HTTP Basic 인증 방식 disable
         http
                 .httpBasic((auth) -> auth.disable());
@@ -78,6 +86,20 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowCredentials(true);
+        config.setAllowedOriginPatterns(Arrays.asList("*"));        //모든 요청의 허용
+        config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
 }

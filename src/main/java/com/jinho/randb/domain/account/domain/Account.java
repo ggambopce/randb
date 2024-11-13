@@ -26,6 +26,9 @@ public class Account {
 
     String loginId;
     String email;
+    String nickname;
+    @JsonIgnore
+    String roles;
     String login_type;
 
     @Column(name = "username")
