@@ -104,7 +104,7 @@ public class PostController {
                             examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
     })
     @GetMapping("/api/user/posts/{post-id}")
-    public ResponseEntity<?> findPost(@PathVariable("post-id") long id) {
+    public ResponseEntity<?> findPost(@PathVariable("post-id") Long id) {
         Optional<Post> post = postService.findById(id);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", post));
     }
@@ -119,7 +119,7 @@ public class PostController {
                             examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
     })
     @GetMapping("/api/user/detail/posts/{post-id}")
-    public ResponseEntity<?> getDetail(@PathVariable("post-id") long postId) {
+    public ResponseEntity<?> getDetail(@PathVariable("post-id") Long postId) {
         PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
 
         // 로그인된 사용자 정보 확인

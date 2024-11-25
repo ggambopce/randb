@@ -24,10 +24,12 @@ public class Account {
     @Column(name = "account_id")
     private Long id;
 
+    @Column(unique = true)
     String loginId;
     String email;
     String nickname;
     @JsonIgnore
+    @Column(nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
     String roles;
     String login_type;
 
