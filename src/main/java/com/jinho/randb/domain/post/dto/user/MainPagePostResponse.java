@@ -1,6 +1,5 @@
 package com.jinho.randb.domain.post.dto.user;
 
-import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
 import lombok.Data;
 

@@ -4,12 +4,12 @@ import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.global.jwt.utils.JwtAuthorizationFilter;
 import com.jinho.randb.global.jwt.utils.JwtLoginFilter;
 import com.jinho.randb.global.jwt.utils.JwtProvider;
+import com.jinho.randb.global.security.oauth2.CustomOauth2Handler;
 import com.jinho.randb.global.security.oauth2.CustomOauth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,7 +31,8 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final AccountRepository accountRepository;
-    private final CustomOauth2Service customOAuth2Service;
+    private final CustomOauth2Handler customOauth2Handler;
+    private final CustomOauth2Service customOauth2Service;
     private final JwtProvider jwtProvider;
 
     @Bean
@@ -55,12 +56,18 @@ public class SecurityConfig {
         http
                 .oauth2Login((oauth2) -> oauth2
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2Service)));
+                                .userService(customOauth2Service)));
         //경로별 인가 작업
         http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/").permitAll()
-                        .anyRequest().authenticated());
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/**").permitAll()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .successHandler(customOauth2Handler)
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOauth2Service)
+                        )
+                );
         //세션 설정 : STATELESS
         http
                 .sessionManagement((session) -> session

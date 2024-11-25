@@ -2,7 +2,6 @@ package com.jinho.randb.domain.post.dao;
 
 
 import com.jinho.randb.domain.post.domain.Post;
-import com.jinho.randb.domain.post.domain.QPost;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.jinho.randb.domain.account.domain.QAccount.account;
-import static com.jinho.randb.domain.post.domain.QPost.*;
+import static com.jinho.randb.domain.post.domain.QPost.post;
 
 @Slf4j
 @Repository
@@ -96,6 +95,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent)
                 .from(post)
                 .fetch();
+
         return list.stream().map(tuple -> PostDto.from(tuple.get(post.id),
                 tuple.get(post.postTitle),
                 tuple.get(post.postContent))).collect(Collectors.toList());
