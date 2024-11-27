@@ -33,11 +33,6 @@ public class AccountDto {
     @Schema(description = "비밀번호",example = "1234")
     String password;
 
-    @NotEmpty(message = "별명을 입력해주세요")
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣]{4,}$",message = "사용할수 없는 별명입니다.")
-    @Schema(description = "사용자의 별명",example = "나만냉")
-    String nickname;
-
     @NotEmpty(message = "아이디를 입력해주세요")
     @Pattern(regexp = "^[a-zA-Z0-9]{5,16}$", message = "올바른 아이디를 입력해주세요")
     @Schema(description = "로그인 아이디",example = "exampleId")
@@ -67,19 +62,19 @@ public class AccountDto {
     public Account toEntity(AccountDto accountDto) {
         return Account.builder()
                 .id(accountDto.getId())
+                .loginId(accountDto.getLoginId())
+                .email(accountDto.getEmail())
                 .username(accountDto.getUsername())
-                .password(accountDto.getPassword())
-                .roles(accountDto.getRoles())
                 .join_date(accountDto.getJoin_date())
+                .login_type(accountDto.getLogin_type())
                 .build();
     }
 
-    private AccountDto(Long accountId, String loginId, String email, String username, String nickname, LocalDate join_date) {
+    private AccountDto(Long accountId, String loginId, String email, String username, LocalDate join_date) {
         this.id = accountId;
         this.loginId = loginId;
         this.email = email;
         this.username = username;
-        this.nickname = nickname;
         this.join_date = join_date;
     }
 
@@ -88,7 +83,6 @@ public class AccountDto {
                 .id(account.getId())
                 .loginId(account.getLoginId())
                 .username(account.getUsername())
-                .nickname(account.getNickname())
                 .password(account.getPassword())
                 .email(account.getEmail())
                 .roles(account.getRoles())
@@ -96,8 +90,8 @@ public class AccountDto {
                 .build();
     }
 
-    public static AccountDto of(Long accountId, String loginId, String email, String username, String nickname, LocalDate join_date) {
-        return new AccountDto(accountId, loginId, email, username, nickname, join_date);
+    public static AccountDto of(Long accountId, String loginId, String email, String username, LocalDate join_date) {
+        return new AccountDto(accountId, loginId, email, username, join_date);
     }
 
 }

@@ -1,6 +1,5 @@
 package com.jinho.randb.domain.post.dao;
 
-
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.querydsl.core.BooleanBuilder;
