@@ -17,17 +17,23 @@ import java.time.LocalDate;
 @Slf4j
 public class AccountServiceImpl implements AccountService{
 
+    private static String LOGIN_TYPE = "normal";
+
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public void signup(AccountDto accountDto) {
+    public void saveDto(AccountDto accountDto) {
 
         Account account = Account.builder()
-                .username(accountDto.getUsername())
+                .loginId(accountDto.getLoginId())
                 .password(passwordEncoder.encode(accountDto.getPassword()))
-                .roles(accountDto.getRoles())
+                .username(accountDto.getUsername())
+                .login_type(LOGIN_TYPE)
+                .email(accountDto.getEmail())
                 .join_date(LocalDate.now())
+                .roles("ROLE_USER")
+                .verified(true)
                 .build();
 
         accountRepository.save(account);
