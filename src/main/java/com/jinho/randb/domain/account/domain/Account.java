@@ -27,7 +27,6 @@ public class Account {
     @Column(unique = true)
     String loginId;
     String email;
-    String nickname;
     @JsonIgnore
     @Column(nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
     String roles;
@@ -39,10 +38,6 @@ public class Account {
     private String password;
 
     LocalDate join_date;
-
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean verified;
-
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;

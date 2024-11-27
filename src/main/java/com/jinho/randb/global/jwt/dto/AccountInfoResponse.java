@@ -16,7 +16,6 @@ public class AccountInfoResponse {
         this.id = id;
         this.loginId = loginId;
         this.username = username;
-
         this.loginType = loginType;
         this.roles = roles;
     }
