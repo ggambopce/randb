@@ -27,7 +27,13 @@
 
 
 ## 🖨️ 기술 스택
-<h3 align="center"> 개발 / 테스트 </h3>
+<h3 align="center"> FE 개발  </h3> 
+<p align="center"> 
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/> 
+<img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=flat-square&logo=TailwindCSS&logoColor=white"/> 
+<img src="https://img.shields.io/badge/Redux-764ABC?style=flat-square&logo=Redux&logoColor=white"/> </p>
+
+<h3 align="center"> BE 개발 / 테스트 </h3>
 
 <p align="center">
 <img src="https://img.shields.io/badge/Java 17-008FC7?style=flat-square&logo=Java&logoColor=white"/></img>
