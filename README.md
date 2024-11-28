@@ -76,9 +76,14 @@
 ## 📋 API 명세서
 <img alt=".png" src="https://github.com/user-attachments/assets/53ed2d94-ca30-49dd-8193-c5da93ab2d44" width="700"/>
 
-## 🎯 트러블 슈팅
-> - [Open AI 키 발급 문제]()<br>
-> - [DTO사용]()<br>
+## 🎯 학습 과정
+> - [Spring DI, 캡슐화, 추상화, 다형성]()<br>
+> - [QueryDSL 객체지향적DB관리]()<br>
+> - [Open AI API]()<br>
+> - [DTO,람다식, 스트림, 튜플]()<br>
+> - [페이징, 무한스크롤]()<br>
+> - [JWT,OAuth2.0 BE와FE 책임관계]()<br>
+> - [RestfulAPI]()<br>
 
 
 ## 📦 디렉토리 구조
