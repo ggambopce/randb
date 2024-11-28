@@ -78,7 +78,7 @@
 
 ## 🎯 학습 과정
 > - [Spring DI, 캡슐화, 추상화, 다형성]()<br>
-> - [QueryDSL 객체지향적DB관리]()<br>
+> - [QueryDSL 객체지향적DB관리]()<br>
 > - [Open AI API]()<br>
 > - [DTO,람다식, 스트림, 튜플]()<br>
 > - [페이징, 무한스크롤]()<br>
