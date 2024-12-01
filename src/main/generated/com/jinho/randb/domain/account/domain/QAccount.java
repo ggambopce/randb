@@ -20,9 +20,15 @@ public class QAccount extends EntityPathBase<Account> {
 
     public static final QAccount account = new QAccount("account");
 
+    public final StringPath email = createString("email");
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final DatePath<java.time.LocalDate> join_date = createDate("join_date", java.time.LocalDate.class);
+
+    public final StringPath login_type = createString("login_type");
+
+    public final StringPath loginId = createString("loginId");
 
     public final ListPath<com.jinho.randb.domain.opinion.domain.Opinion, com.jinho.randb.domain.opinion.domain.QOpinion> opinions = this.<com.jinho.randb.domain.opinion.domain.Opinion, com.jinho.randb.domain.opinion.domain.QOpinion>createList("opinions", com.jinho.randb.domain.opinion.domain.Opinion.class, com.jinho.randb.domain.opinion.domain.QOpinion.class, PathInits.DIRECT2);
 
@@ -33,6 +39,8 @@ public class QAccount extends EntityPathBase<Account> {
     public final StringPath roles = createString("roles");
 
     public final StringPath username = createString("username");
+
+    public final BooleanPath verified = createBoolean("verified");
 
     public QAccount(String variable) {
         super(Account.class, forVariable(variable));

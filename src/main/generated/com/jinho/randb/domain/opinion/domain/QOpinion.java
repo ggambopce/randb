@@ -55,7 +55,7 @@ public class QOpinion extends EntityPathBase<Opinion> {
     public QOpinion(Class<? extends Opinion> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.account = inits.isInitialized("account") ? new com.jinho.randb.domain.account.domain.QAccount(forProperty("account")) : null;
-        this.post = inits.isInitialized("post") ? new com.jinho.randb.domain.post.domain.QPost(forProperty("post"), inits.get("post")) : null;
+        this.post = inits.isInitialized("post") ? new com.jinho.randb.domain.post.domain.QPost(forProperty("post")) : null;
     }
 
 }
