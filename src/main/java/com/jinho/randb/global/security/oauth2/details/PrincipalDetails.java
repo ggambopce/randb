@@ -17,9 +17,17 @@ import java.util.Map;
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
     private Account account;
+    private Map<String, Object> attributes;
 
+    // 일반 로그인 사용자
     public PrincipalDetails(Account account) {
         this.account = account;
+    }
+
+    // OAuth2 로그인 사용자
+    public PrincipalDetails(Account account, Map<String, Object> attributes) {
+        this.account = account;
+        this.attributes = attributes;
     }
 
     public AccountDto getAccountDto(Account account) {

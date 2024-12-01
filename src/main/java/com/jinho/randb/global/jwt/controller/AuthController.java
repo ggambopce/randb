@@ -147,7 +147,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",description = "OK",
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
-                            examples = @ExampleObject(value = "{\"success\":true,\"message\" :\"조회 성공\", \"data\": {\"id\":\"member_id\",\"loginId\":\"로그인 아이디\",\"nickName\":\"닉네임\",\"loginType\":\"normal\"}}"))),
+                            examples = @ExampleObject(value = "{\"success\":true,\"message\" :\"조회 성공\", \"data\": {\"id\":\"account_id\",\"loginId\":\"로그인 아이디\",\"nickName\":\"닉네임\",\"loginType\":\"normal\"}}"))),
             @ApiResponse(responseCode = "401" ,description = "Unauthorized",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"토큰이 존재하지 않습니다.\"}"))),
@@ -182,11 +182,11 @@ public class AuthController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/logout")
-    public ResponseEntity<?> LogOut(@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\"member-id\":\"사용자 member-id\"}")))
+    public ResponseEntity<?> LogOut(@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(examples = @ExampleObject(value = "{\"account-id\":\"사용자 account-id\"}")))
                                     @RequestBody Map<String,String> data) {
         try {
-            long memberId = Long.parseLong(data.get("member-id"));
-            jwtAuthService.logout(memberId);
+            long accountId = Long.parseLong(data.get("account-id"));
+            jwtAuthService.logout(accountId);
             SecurityContextHolder.clearContext();
 
             ResponseCookie deleteCookie = ResponseCookie.from("RefreshToken", null)

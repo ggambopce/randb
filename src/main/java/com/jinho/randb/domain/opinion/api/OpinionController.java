@@ -77,7 +77,7 @@ public class OpinionController {
                             examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"opinions\":[{\"id\":23, \"opinionContent\" : \"이것은 의견의 내용입니다.\"}]}")))
     })
     @GetMapping("/api/opinions")
-    public ResponseEntity<?> findAllOpinion(@Parameter(description = "의견 Id")@RequestParam(value = "postId", required = true)Long postId) {
+    public ResponseEntity<?> findAllOpinion(@Parameter(description = "토론 Id")@RequestParam(value = "postId", required = true)Long postId) {
         List<OpinionContentAndTypeDto> opinions = opinionService.findByPostId(postId);
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", opinions));
     }
