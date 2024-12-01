@@ -84,7 +84,7 @@ public class OpinionSummaryController {
     }
 
 
-    @Operation(summary = "의견 전체 조회 및 요약 API", description = "의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
+    @Operation(summary = "의견 전체 조회 및 요약 API", description = "토론글에 의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
