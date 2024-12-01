@@ -37,3 +37,10 @@ out/
 ### VS Code ###
 .vscode/
 .DS_Store
+
+# Ignore all yml files
+*.yml
+
+# If you want to ignore only specific yml files (like application.yml)
+application.yml
+application-test.yml
