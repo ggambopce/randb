@@ -12,6 +12,7 @@ import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -36,33 +37,35 @@ public class OpinionServiceImpl implements OpinionService {
     private final PostRepository postRepository;
 
     @Override
-    public Opinion save(AddOpinionRequest addOpinionRequest) {
+    public void save(AddOpinionRequest addOpinionRequest) {
         // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AccountDto accountDto = (AccountDto) authentication.getPrincipal();
-        Long accountId = accountDto.getId();  // 로그인된 사용자의 accountId 가져오기
 
-        Long postId = addOpinionRequest.getPostId();
-
-        Optional<Account>op_account = accountRepository.findById(accountId);
-        Optional<Post>op_post = postRepository.findById(postId);
-
-        if (op_account.isPresent() && op_post.isPresent()) {     //사용자 정보와 게시글의 정보가 존재할시에만 통과
-            Account account = op_account.get();
-            Post post = op_post.get();
-            LocalDateTime localDateTime = LocalDateTime.now().withNano(0).withSecond(0);
-
-            Opinion opinion = Opinion.builder()     //의견 저장
-                    .opinionContent(addOpinionRequest.getOpinionContent())
-                    .opinionType(addOpinionRequest.getOpinionType())
-                    .account(account)
-                    .post(post)
-                    .created_at(localDateTime)
-                    .build();
-            return opinionRepository.save(opinion);
-        }else {
-            throw new NoSuchElementException("회원정보나 게시글을 찾을수 없습니다.");   //사용자 및 게시글이 없을시에는 해당 예외발생
+        // Principal 객체를 안전하게 캐스팅
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof PrincipalDetails principalDetails)) {
+            throw new IllegalStateException("인증된 사용자 정보가 PrincipalDetails 타입이 아닙니다.");
         }
+
+        // PrincipalDetails에서 AccountDto 가져오기
+        AccountDto accountDto = principalDetails.getAccountDto();
+        Long accountId = accountDto.getId();
+
+        // Account 조회
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다."));
+
+        // DTO -> domain 변환
+        Opinion opinion = Opinion.builder()
+                .opinionContent(addOpinionRequest.getOpinionContent())  // 의견 내용 설정
+                .opinionType(addOpinionRequest.getOpinionType())  // 카테고리 설정 (RED/BLUE)
+                .post(postRepository.findById(addOpinionRequest.getPostId())
+                        .orElseThrow(() -> new NoSuchElementException("게시글을 찾을 수 없습니다."))) // 게시글 설정
+                .account(account) // 작성자 정보 설정
+                .created_at(LocalDateTime.now())
+                .build();
+
+        opinionRepository.save(opinion); // 의견 저장
     }
 
     @Override

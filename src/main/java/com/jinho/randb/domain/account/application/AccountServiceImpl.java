@@ -3,6 +3,7 @@ package com.jinho.randb.domain.account.application;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.account.dto.AccountDto;
+import com.jinho.randb.global.jwt.repository.JWTRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class AccountServiceImpl implements AccountService{
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JWTRefreshTokenRepository jwtRefreshTokenRepository;
 
     @Override
     public void saveDto(AccountDto accountDto) {
@@ -37,5 +39,21 @@ public class AccountServiceImpl implements AccountService{
                 .build();
 
         accountRepository.save(account);
+    }
+
+    @Override
+    public AccountDto findByLoginId(String loginId) {
+        Account byLoginId = accountRepository.findByLoginId(loginId);
+        if (byLoginId == null){
+            log.info("오류발생");
+        }
+
+        return AccountDto.from(byLoginId);
+    }
+
+    @Override
+    public void deleteAccount(Long accountId) {
+        jwtRefreshTokenRepository.DeleteByAccountId(accountId);
+        accountRepository.deleteById(accountId);
     }
 }

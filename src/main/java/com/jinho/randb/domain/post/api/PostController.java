@@ -56,9 +56,13 @@ public class PostController {
     public ResponseEntity<?> postAdd(@Valid @RequestBody UserAddRequest userAddPostDto, BindingResult bindingResult){
 
         try{
+            // 요청 유효성 검사
             ResponseEntity<ErrorResponse<Map<String, String>>> errorMap = getErrorResponseResponseEntity(bindingResult);
             if (errorMap != null) return errorMap;
+
+            // 게시글 저장
             postService.save(userAddPostDto);
+
             return ResponseEntity.ok(new ControllerApiResponse(true, "작성 성공"));
         } catch (NoSuchElementException e) {
             throw new PostException(e.getMessage());
@@ -93,22 +97,6 @@ public class PostController {
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", mainPagePostResponse));
     }
 
-
-    @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = Post.class),
-                            examples = @ExampleObject(value = "{\"success\":true,\"message\":\"조회성공\",\"data\":{\"post\":{\"id\":3,\"postTitle\":\"토론 주제\",\"postContent\":\"토론 내용입니다!\"}}}"))),
-            @ApiResponse(responseCode = "400", description = "BAD REQUEST",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
-                            examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"해당하는 게시물이 없습니다.\"}")))
-    })
-    @GetMapping("/api/user/posts/{post-id}")
-    public ResponseEntity<?> findPost(@PathVariable("post-id") Long id) {
-        Optional<Post> post = postService.findById(id);
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", post));
-    }
-
     @Operation(summary = "토론글 상세 조회 API", description = "토론글의 상세 정보를 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
@@ -121,20 +109,6 @@ public class PostController {
     @GetMapping("/api/user/detail/posts/{post-id}")
     public ResponseEntity<?> getDetail(@PathVariable("post-id") Long postId) {
         PostDetailResponse postDetailResponse = postService.getPostDetail(postId);
-
-        // 로그인된 사용자 정보 확인
-        boolean isAuthor = false;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof PrincipalDetails) {
-            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            String currentUsername = principalDetails.getUsername();
-
-            // 게시글 작성자와 현재 로그인한 사용자 비교
-            isAuthor = postDetailResponse.getPost().getUsername().equals(currentUsername);
-        }
-
-        // isAuthor 값을 PostDetailResponse에 추가
-        postDetailResponse.setAuthor(isAuthor);
 
         // JSON 형식의 응답 반환
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postDetailResponse));
@@ -155,8 +129,10 @@ public class PostController {
     @DeleteMapping("/api/user/posts/{post-id}")
     public ResponseEntity<?> deletePost(@PathVariable("post-id") Long postId) {
         try {
-            String username = authenticationLogin();
-            postService.delete(username,postId);
+            // 서비스 계층 호출
+            postService.delete(postId);
+
+            // 성공 응답 반환
             return ResponseEntity.ok(new ControllerApiResponse<>(true, "게시글 삭제 성공"));
         } catch (NoSuchElementException e) {
             throw new BadRequestException(e.getMessage());  //예외처리-> 여기서 처리안하고  @ExceptionHandler로 예외처리함
@@ -178,28 +154,22 @@ public class PostController {
     public ResponseEntity<?> updatePost(@Valid @RequestBody UserUpdateRequest updatePostDto, BindingResult bindingResult, @PathVariable("post-id") Long postId){
 
         try {
+            // 유효성 검사
             ResponseEntity<ErrorResponse<Map<String, String>>> errorMap = getErrorResponseResponseEntity(bindingResult);
             if (errorMap != null) return errorMap;
 
-            String username = authenticationLogin();
-            postService.update(postId, updatePostDto, username);
+            // 서비스 호출: 게시글 수정
+            postService.update(postId, updatePostDto);
 
+            // 성공 응답 반환
             return ResponseEntity.ok(new ControllerApiResponse(true, "토론글 수정 성공"));
         }catch (NoSuchElementException e){
-            throw new BadRequestException(e.getMessage());
+            throw new BadRequestException(e.getMessage());  // 게시글을 찾을 수 없는 경우
         }catch (Exception e){
             e.printStackTrace();
             throw new ServerErrorException("서버 오류 발생", e);
         }
 
-    }
-
-    //로그인한 사용자의 loginId를 스프링 시큐리티에서 획득
-    private static String authenticationLogin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        String username = principal.getAccountDto(principal.getAccount()).getUsername();
-        return username;
     }
 
     /*

@@ -85,6 +85,7 @@ public class JwtAuthServiceImpl implements JwtAuthService {
     public void save(RefreshToken refreshToken) {
         refreshTokenRepository.save(refreshToken);
     }
+
     @Override
     public void logout(Long id) {
         RefreshToken byAccountId = refreshTokenRepository.findByAccountId(id);

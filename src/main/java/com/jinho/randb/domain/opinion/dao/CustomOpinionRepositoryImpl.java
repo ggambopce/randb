@@ -19,7 +19,7 @@ public class CustomOpinionRepositoryImpl implements CustomOpinionRepository {
     @Override
     public List<OpinionContentAndTypeDto> findByPostId(Long postId) {
         List<Tuple> list = queryFactory
-                .select(opinion.opinionContent, opinion.opinionType, account.username, opinion.created_at, opinion.updated_at)
+                .select(opinion.id, opinion.opinionContent, opinion.opinionType, account.username, opinion.created_at, opinion.updated_at)
                 .from(opinion)
                 .join(opinion.account, account)
                 .where(opinion.post.id.eq(postId))
@@ -27,6 +27,7 @@ public class CustomOpinionRepositoryImpl implements CustomOpinionRepository {
 
         return list.stream()
                 .map(tuple -> OpinionContentAndTypeDto.builder()
+                        .id(tuple.get(opinion.id))
                         .opinionContent(tuple.get(opinion.opinionContent))
                         .username(tuple.get(account.username))
                         .opinionType(tuple.get(opinion.opinionType))
