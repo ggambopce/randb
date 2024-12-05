@@ -190,7 +190,7 @@ public class AuthController {
             SecurityContextHolder.clearContext();
 
             ResponseCookie deleteCookie = ResponseCookie.from("RefreshToken", null)
-                    .secure(true)
+                    .secure(true) // 로컬에서 개발시 false
                     .httpOnly(true)
                     .sameSite("None")
                     .maxAge(0).path("/").build();

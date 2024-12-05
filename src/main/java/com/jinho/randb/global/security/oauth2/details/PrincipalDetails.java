@@ -22,6 +22,7 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     // 일반 로그인 사용자
     public PrincipalDetails(Account account) {
         this.account = account;
+        this.attributes = null;
     }
 
     // OAuth2 로그인 사용자
@@ -30,8 +31,8 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
         this.attributes = attributes;
     }
 
-    public AccountDto getAccountDto(Account account) {
-        return AccountDto.from(account);
+    public AccountDto getAccountDto() {
+        return AccountDto.from(this.account);
     }
 
     @Override

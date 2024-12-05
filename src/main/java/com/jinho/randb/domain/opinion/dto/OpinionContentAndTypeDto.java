@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OpinionContentAndTypeDto {
 
+    private Long id;
+
     private String opinionContent;
 
     @Schema(description = "작성자 이름", example = "정의란 무엇인가")
@@ -33,6 +35,7 @@ public class OpinionContentAndTypeDto {
     public static OpinionContentAndTypeDto from(Opinion opinion) {
 
         return OpinionContentAndTypeDto.builder()
+                .id(opinion.getId())
                 .opinionContent(opinion.getOpinionContent())
                 .username(opinion.getAccount().getUsername())
                 .opinionType(opinion.getOpinionType())

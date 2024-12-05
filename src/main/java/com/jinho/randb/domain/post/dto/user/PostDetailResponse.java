@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class PostDetailResponse {
 
     private PostDto post;
-    private boolean isAuthor; // isAuthor 필드 추가
 
     public PostDetailResponse(PostDto postDto) {
         this.post = postDto;

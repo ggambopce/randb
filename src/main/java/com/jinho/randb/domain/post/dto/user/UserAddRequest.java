@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class UserAddRequest {
 
     @Schema(description = "토론글 제목", example = "토론제목!")
-    @NotEmpty(message = "토론 제목을 입력해주세요")
+    @NotBlank(message = "토론 제목을 입력해주세요")
     private String postTitle;
 
     @Schema(description = "토론글 내용", example = "토론내용!")

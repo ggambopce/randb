@@ -54,19 +54,20 @@ public class OpinionController {
     public ResponseEntity<?> opinionAdd(@Valid @RequestBody AddOpinionRequest addOpinionRequest, BindingResult bindingResult){
 
         try {
-            if (bindingResult.hasErrors()){
+            // 요청 유효성 검사
+            if (bindingResult.hasErrors()) {
                 return ResponseEntity.badRequest().body(new ErrorResponse<>(false, bindingResult.getFieldError().getDefaultMessage()));
             }
-            Opinion save = opinionService.save(addOpinionRequest);
 
-            AddOpinionRequest addResponse = new AddOpinionRequest(save.getOpinionContent(), save.getOpinionType(), save.getAccount().getId(), save.getAccount().getUsername(), save.getPost().getId(), save.getCreated_at());
-            return ResponseEntity.ok(new ControllerApiResponse(true,"성공", addResponse));
+            // 의견 저장
+            opinionService.save(addOpinionRequest);
 
-        }catch (NoSuchElementException e){
-            throw new OpinionException(e.getMessage());
-        }catch (Exception e){
+            return ResponseEntity.ok(new ControllerApiResponse<>(true, "성공"));
+        } catch (NoSuchElementException e) {
+            throw new OpinionException("존재하지 않는 항목: " + e.getMessage());
+        } catch (Exception e) {
             e.printStackTrace();
-            throw new ServerErrorException("서버오류", e);
+            throw new ServerErrorException("서버 오류 발생", e);
         }
     }
 

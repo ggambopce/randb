@@ -8,6 +8,7 @@ import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.jinho.randb.domain.post.dto.user.*;
+import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -36,31 +37,33 @@ public class PostServiceImpl implements PostService {
     public void save(UserAddRequest userAddRequest) {
         // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        AccountDto accountDto = (AccountDto) authentication.getPrincipal();
-        Long accountId = accountDto.getId();  // 로그인된 사용자의 accountId 가져오기
 
-
-        Optional<Account> op_account = accountRepository.findById(accountId);
-
-        if (op_account.isPresent()) {
-            Account account = op_account.get();
-            // DTO -> domain 변환
-            Post post = Post.builder()
-                    .postTitle(userAddRequest.getPostTitle())
-                    .postContent(userAddRequest.getPostContent())
-                    .account(account)
-                    .createdAt(LocalDateTime.now())
-                    .build();
-
-            postRepository.save(post);
-
-        } else {
-
-            throw new NoSuchElementException("토론글 저장에 실패했습니다.");
-
+        // Principal 객체를 안전하게 캐스팅
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof PrincipalDetails principalDetails)) {
+            throw new IllegalStateException("인증된 사용자 정보가 PrincipalDetails 타입이 아닙니다.");
         }
 
+        // PrincipalDetails에서 AccountDto 가져오기
+        AccountDto accountDto = principalDetails.getAccountDto();
+        Long accountId = accountDto.getId();
+
+        // Account 조회
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NoSuchElementException("계정을 찾을 수 없습니다."));
+
+        // DTO -> domain 변환
+        Post post = Post.builder()
+                .postTitle(userAddRequest.getPostTitle())
+                .postContent(userAddRequest.getPostContent())
+                .account(account) // 작성자 정보 설정
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        postRepository.save(post);
     }
+
+
     @Override
     public Optional<Post> findById(Long id) {
         return postRepository.findById(id);
@@ -99,26 +102,55 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void delete(String username, Long postId) {
+    public void delete(Long postId) {
+    // 현재 로그인된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalDetails)) {
+            throw new AccessDeniedException("로그인된 사용자만 접근 가능합니다.");
+        }
 
-        Account account = accountRepository.findByUsername(username);
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을수 없습니다."));
-        if(!post.getAccount().getUsername().equals(account.getUsername())) throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String username = principalDetails.getUsername();
 
-        postRepository.deleteAccountId(account.getId(), postId);
+        // 게시글 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
+
+        // 작성자 확인
+        if (!post.getAccount().getUsername().equals(username)) {
+            throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
+        }
+
+        // 게시글 삭제
+        postRepository.delete(post);
     }
 
     @Override
-    public void update(Long postId, UserUpdateRequest userUpdatePostDto, String username) {
+    public void update(Long postId, UserUpdateRequest userUpdatePostDto) {
 
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
-        if(!post.getAccount().getUsername().equals(username)) throw new AccessDeniedException("작성자만 수정 가능합니다.");
+        // 게시글 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시물을 찾을 수 없습니다."));
 
+        // 현재 로그인된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || !(authentication.getPrincipal() instanceof PrincipalDetails)) {
+            throw new AccessDeniedException("로그인된 사용자만 접근 가능합니다.");
+        }
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        String username = principalDetails.getUsername();
+
+        // 작성자 검증
+        if (!post.getAccount().getUsername().equals(username)) {
+            throw new AccessDeniedException("작성자만 수정 가능합니다.");
+        }
+
+        // 게시글 수정
         post.update(userUpdatePostDto.getPostTitle(), userUpdatePostDto.getPostContent());
 
+        // 변경 사항 저장
         postRepository.save(post);
-
     }
-
 
 }

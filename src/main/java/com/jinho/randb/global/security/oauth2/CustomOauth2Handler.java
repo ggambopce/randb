@@ -44,8 +44,8 @@ public class CustomOauth2Handler extends SimpleUrlAuthenticationSuccessHandler {
 
         ResponseCookie responseCookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
-                .sameSite("None")
+                .secure(false)
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(30 * 24 * 60 * 60)
                 .build();
