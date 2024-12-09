@@ -63,7 +63,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         }
 
         // QueryDSL을 사용하여 동적 쿼리 실행 및 페이징 처리
-        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.createdAt, account.username)
+        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.type, post.createdAt, account.username)
                 .from(post)
                 .leftJoin(post.account, account) // post.account와 account를 조인
                 .where(builder)
@@ -76,7 +76,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 .map(tuple -> new PostDto(tuple.get(post.id),
                         tuple.get(post.postTitle),
                         tuple.get(post.postContent),
-                        tuple.get(account.username)))   // username 추가
+                        tuple.get(account.username),
+                        tuple.get(post.type) // 토론글 상태
+                        ))   // username 추가
                 .collect(Collectors.toList());
 
         // 다음 페이지가 있는지 확인
@@ -91,13 +93,15 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     public List<PostDto> mainPagePost() {
 
         //튜플로 토론글 id, 제목, 내용을 조회
-        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent)
+        List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.type)
                 .from(post)
                 .fetch();
 
         return list.stream().map(tuple -> PostDto.from(tuple.get(post.id),
                 tuple.get(post.postTitle),
-                tuple.get(post.postContent))).collect(Collectors.toList());
+                tuple.get(post.postContent),
+                tuple.get(post.type)
+                )).collect(Collectors.toList());
     } //from은 정적 팩토리 메서드로 new 키워드를 사용하는 것과는 다른 방식. 팩토리 메서드는 new 없이 호출
 
 
