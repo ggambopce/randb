@@ -1,6 +1,7 @@
 package com.jinho.randb.domain.post.application;
 
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.user.*;
 import org.springframework.data.domain.Pageable;
 
@@ -25,6 +26,7 @@ public interface PostService {
 
     void update(Long postId, UserUpdateRequest userUpdatePostDto);
 
+    void updatePostType(Long postId, PostType newType);
 
 
 }

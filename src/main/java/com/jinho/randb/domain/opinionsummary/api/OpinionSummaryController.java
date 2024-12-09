@@ -62,10 +62,10 @@ public class OpinionSummaryController {
 
         try{
 
-            // 의견 요약 저장 로직 호출
+            // 의견 요약 저장 및 토론글 상태 변경
             Map<String, String> summaries = opinionSummaryService.summarizeAndSave(postId);
 
-            return  ResponseEntity.ok(new ControllerApiResponse<>(true,"요약글 작성 성공", summaries));
+            return  ResponseEntity.ok(new ControllerApiResponse<>(true,"요약글 작성 성공 및 상태 변경 완료", summaries));
         } catch (NoSuchElementException e) {
             throw new PostException(e.getMessage());
         }catch (Exception e) {
