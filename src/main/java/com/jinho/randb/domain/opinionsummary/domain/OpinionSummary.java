@@ -23,7 +23,7 @@ public class OpinionSummary {
     private Long id;
 
     @Lob
-    @Column(name = "opinion_summary_content", length = 1000, nullable = false)
+    @Column(name = "opinion_summary_content", nullable = false)
     private String opinionSummaryContent;
 
     @Enumerated(EnumType.STRING)
@@ -48,5 +48,7 @@ public class OpinionSummary {
     public LocalDateTime getUpdate_LocDateTime(){
         return this.updated_at = LocalDateTime.now().withSecond(0).withNano(0);
     }
+
+
 
 }

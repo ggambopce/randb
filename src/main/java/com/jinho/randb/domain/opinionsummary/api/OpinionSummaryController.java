@@ -6,6 +6,9 @@ import com.jinho.randb.domain.opinion.dto.OpinionContentAndTypeDto;
 import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.domain.opinionsummary.application.OpinionSummaryService;
 import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryDto;
+import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryResponseDto;
+import com.jinho.randb.domain.post.exception.PostException;
+import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.payload.ControllerApiResponse;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,87 +19,83 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerErrorException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
+import static com.jinho.randb.domain.post.api.PostController.getErrorResponseResponseEntity;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 @OpenAPIDefinition(tags = {
-        @Tag(name = "일반 사용자 의견 컨트롤러", description = "일반 사용자 의견 관련 작업")
+        @Tag(name = "일반 사용자 의견요약 컨트롤러", description = "토론글 작성자 의견요약 관련 작업")
 })
 @Slf4j
 public class OpinionSummaryController {
 
-    private final OpinionService opinionService;
     private final OpinionSummaryService opinionSummaryService;
-    private final OpenAiChatModel openAiChatModel;
-    //private final VertexAiGeminiChatModel vertexAiGeminiChatModel;
 
-    @Operation(summary = "의견 전체 조회 및 요약 API V1", description = "의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다. 컨트롤러 버전", tags = {"일반 사용자 의견 컨트롤러"})
+
+    @Operation(summary = "의견요약 작성 API", description = "의견요약 작성", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
-                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 및 요약 성공\",\"summary\": \"[요약된 내용]\"}")))
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"작성 성공\"}"))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"모든 값을 입력해 주세요\"}")))
     })
-    @GetMapping("/opinions/summaryV1")
-    public ResponseEntity<?> summarizeOpinions(@Parameter(description = "토론글 ID") @RequestParam(value = "postId", required = false) Long postId) {
-        // 이미 OpinionDto로 변환된 데이터를 가져오기 때문에 다시 변환하지 않음
-        List<OpinionContentAndTypeDto> opinionDtos = opinionService.findByPostId(postId);
+    @PostMapping(value = "/user/opinionSummary")
+    public ResponseEntity<?> opinionSummaryAdd(@RequestParam("postId") Long postId){
 
-        // RED 의견 필터링
-        List<String> redOpinions = opinionDtos.stream()
-                .filter(opinion -> opinion.getOpinionType() == OpinionType.RED)
-                .map(OpinionContentAndTypeDto::getOpinionContent)
-                .collect(Collectors.toList());
+        try{
 
-        // BLUE 의견 필터링
-        List<String> blueOpinions = opinionDtos.stream()
-                .filter(opinion -> opinion.getOpinionType() == OpinionType.BLUE)
-                .map(OpinionContentAndTypeDto::getOpinionContent)
-                .collect(Collectors.toList());
+            // 의견 요약 저장 로직 호출
+            Map<String, String> summaries = opinionSummaryService.summarizeAndSave(postId);
 
-        // RED 의견 요약
-        String redPrompt = "다음은 RED 입장의 의견 목록입니다. 비속어나 비방하는 부분은 제외하고 논리정연하게 이 의견들을 요약하여 하나의 논설문으로 만들어 주세요:\n" + String.join("\n", redOpinions);
-        String redSummary = openAiChatModel.call(redPrompt);
-
-        // BLUE 의견 요약
-        String bluePrompt = "다음은 BLUE 입장의 의견 목록입니다. 비속어나 비방하는 부분은 제외하고 논리정연하게 이 의견들을 요약하여 하나의 논설문으로 만들어 주세요:\n" + String.join("\n", blueOpinions);
-        String blueSummary = openAiChatModel.call(bluePrompt);
-
-        // 응답 생성
-        Map<String, String> response = new HashMap<>();
-        response.put("red_summary", redSummary);
-        response.put("blue_summary", blueSummary);
-
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "요약 성공", response));
+            return  ResponseEntity.ok(new ControllerApiResponse<>(true,"요약글 작성 성공", summaries));
+        } catch (NoSuchElementException e) {
+            throw new PostException(e.getMessage());
+        }catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException("서버오류", e);
+        }
     }
 
-
-    @Operation(summary = "의견 전체 조회 및 요약 API", description = "토론글에 의견의 전체 목록을 조회한 후 RED와 BLUE 입장을 각각 요약할 수 있습니다.", tags = {"일반 사용자 의견 컨트롤러"})
+    @Operation(summary = "토론글 요약 조회 API", description = "특정 토론글의 요약 정보를 조회합니다.", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = ControllerApiResponse.class),
-                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 및 요약 성공\",\"summary\": \"[요약된 내용]\"}")))
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\", \"data\" : {\"RED\" : \"요약 내용\", \"BLUE\" : \"요약 내용\"}}"))),
+            @ApiResponse(responseCode = "404", description = "NOT FOUND",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"요약 정보를 찾을 수 없습니다.\"}")))
     })
-    @GetMapping("/opinions/summary")
-    public ResponseEntity<?> saveOpinionSummary(@Parameter(description = "토론글 ID") @RequestParam(value = "postId", required = false) Long postId) {
-        // 의견 요약 서비스 호출
-        Map<String, String> summaryMap = opinionSummaryService.saveOpinionSummary(postId);
+    @GetMapping(value = "/user/opinionSummary")
+    public ResponseEntity<?> getOpinionSummary(@RequestParam("postId") Long postId) {
+        try {
+            // 서비스 호출하여 DTO 반환
+            OpinionSummaryResponseDto response = opinionSummaryService.findOpinionSummaryByPostId(postId);
 
-        // 응답 생성
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "요약 성공", summaryMap));
+            return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회 성공", response));
+        } catch (NoSuchElementException e) {
+            throw new PostException("해당 토론글에 대한 요약 정보를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerErrorException("서버오류", e);
+        }
     }
 
 }

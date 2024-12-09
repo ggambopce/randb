@@ -175,7 +175,7 @@ public class PostController {
     /*
     BindingResult 의 예외 Valid 여러곳의 사용되어서 메소드로 추출
      */
-    private static ResponseEntity<ErrorResponse<Map<String, String>>> getErrorResponseResponseEntity(BindingResult bindingResult) {
+    public static ResponseEntity<ErrorResponse<Map<String, String>>> getErrorResponseResponseEntity(BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
             Map<String,String> errorMap = new HashMap<>();
             for(FieldError error : bindingResult.getFieldErrors()){
