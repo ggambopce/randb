@@ -29,9 +29,9 @@ public class VoteServiceImpl implements VoteService {
     private final AccountRepository accountRepository;
 
     // 투표 생성
-    public void saveVote(VoteRequestDto voteRequest) {
+    public void saveVote(VoteRequestDto voteRequest, Long accountId) {
         // 중복 투표 방지
-        boolean hasVoted = voteRepository.existsByPostIdAndAccountId(voteRequest.getPostId(), voteRequest.getAccountId());
+        boolean hasVoted = voteRepository.existsByPostIdAndAccountId(voteRequest.getPostId(), accountId);
         if (hasVoted) {
             throw new IllegalArgumentException("이미 해당 토론글에 투표했습니다.");
         }
@@ -41,7 +41,7 @@ public class VoteServiceImpl implements VoteService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 토론글을 찾을 수 없습니다."));
 
         // 사용자 조회
-        Account account = accountRepository.findById(voteRequest.getAccountId())
+        Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         // 투표 저장

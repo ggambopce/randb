@@ -23,7 +23,7 @@ public class OpinionSummary {
     private Long id;
 
     @Lob
-    @Column(name = "opinion_summary_content", nullable = false)
+    @Column(name = "opinion_summary_content", columnDefinition = "TEXT", nullable = false)
     private String opinionSummaryContent;
 
     @Enumerated(EnumType.STRING)
