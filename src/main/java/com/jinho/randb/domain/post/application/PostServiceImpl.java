@@ -6,6 +6,7 @@ import com.jinho.randb.domain.account.dto.AccountContext;
 import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
@@ -57,6 +58,7 @@ public class PostServiceImpl implements PostService {
                 .postTitle(userAddRequest.getPostTitle())
                 .postContent(userAddRequest.getPostContent())
                 .account(account) // 작성자 정보 설정
+                .type(PostType.DISCUSSING) // 기본상태를 DISCUSSING으로 설정
                 .createdAt(LocalDateTime.now())
                 .build();
 

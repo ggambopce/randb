@@ -39,6 +39,10 @@ public class Post {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "post_type", nullable = false)
+    private PostType type; // 상태
+
     public void update(String postTitle, String postContent){
         this.postTitle = postTitle;
         this.postContent = postContent;
