@@ -8,8 +8,10 @@ import com.jinho.randb.domain.opinionsummary.domain.OpinionSummary;
 import com.jinho.randb.domain.opinionsummary.domain.QOpinionSummary;
 import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryDto;
 import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryResponseDto;
+import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.domain.PostType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.openai.OpenAiChatModel;
@@ -33,6 +35,7 @@ public class OpinionSummaryServiceImpl implements OpinionSummaryService {
     private final OpinionService opinionService;
     private final OpinionSummaryRepository opinionSummaryRepository;
     private final PostRepository postRepository;
+    private final PostService postService;
     private final OpenAiChatModel openAiChatModel;
     //private final VertexAiGeminiChatModel vertexAiGeminiChatModel;
 
@@ -70,6 +73,9 @@ public class OpinionSummaryServiceImpl implements OpinionSummaryService {
         // 저장
         opinionSummaryRepository.save(redOpinionSummary);
         opinionSummaryRepository.save(blueOpinionSummary);
+
+        // Post 상태 변경: DISCUSSING -> VOTING
+        postService.updatePostType(postId, PostType.VOTING);
 
         // 요약된 내용 반환
         return Map.of(

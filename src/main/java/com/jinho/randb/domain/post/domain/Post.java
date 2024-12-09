@@ -43,6 +43,11 @@ public class Post {
     @Column(name = "post_type", nullable = false)
     private PostType type; // 상태
 
+    public void updatePostType(PostType newType) {
+        this.type = newType;
+        this.updatedAt = LocalDateTime.now(); // 상태 변경 시 업데이트 시간 갱신
+    }
+
     public void update(String postTitle, String postContent){
         this.postTitle = postTitle;
         this.postContent = postContent;

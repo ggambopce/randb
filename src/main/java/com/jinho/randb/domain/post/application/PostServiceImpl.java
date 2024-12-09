@@ -155,4 +155,15 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
     }
 
+    @Override
+    public void updatePostType(Long postId, PostType newType) {
+        // Post 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
+
+        // 상태 변경
+        post.updatePostType(newType);
+        postRepository.save(post); // 변경사항 저장
+    }
+
 }
