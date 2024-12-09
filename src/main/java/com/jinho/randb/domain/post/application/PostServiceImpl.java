@@ -5,10 +5,14 @@ import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.account.dto.AccountContext;
 import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
+import com.jinho.randb.domain.post.dao.PostStatisticsRepository;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.domain.PostStatistics;
 import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.jinho.randb.domain.post.dto.user.*;
+import com.jinho.randb.domain.votes.dao.VoteRepository;
+import com.jinho.randb.domain.votes.domain.VoteType;
 import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +37,8 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final AccountRepository accountRepository;
+    private final VoteRepository voteRepository;
+    private final PostStatisticsRepository postStatisticsRepository;
 
     @Override
     public void save(UserAddRequest userAddRequest) {
@@ -164,6 +170,57 @@ public class PostServiceImpl implements PostService {
         // 상태 변경
         post.updatePostType(newType);
         postRepository.save(post); // 변경사항 저장
+    }
+
+    @Override
+    public PostStatistics completePost(Long postId) {
+
+        // Post 조회
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
+
+        // 상태를 COMPLETED로 변경
+        post.updatePostType(PostType.COMPLETED);
+        post.setCompletedAt(LocalDateTime.now());
+        postRepository.save(post);
+
+        // 투표 수 계산
+        int redVotes = voteRepository.countByPostAndVoteType(postId, VoteType.RED);
+        int blueVotes = voteRepository.countByPostAndVoteType(postId, VoteType.BLUE);
+
+        // 승리한 의견 계산
+        String winningVoteType = redVotes > blueVotes ? "RED" : (blueVotes > redVotes ? "BLUE" : "TIE");
+
+        // 투표 비율 계산
+        int totalVotes = redVotes + blueVotes;
+        double redVotePercentage = totalVotes > 0 ? (double) redVotes / totalVotes * 100 : 0;
+        double blueVotePercentage = totalVotes > 0 ? (double) blueVotes / totalVotes * 100 : 0;
+
+        // 기존 통계 데이터 조회
+        Optional<PostStatistics> existingStatistics = postStatisticsRepository.findByPost(post);
+
+        PostStatistics statistics;
+        if (existingStatistics.isPresent()) {
+            // 기존 데이터 업데이트
+            statistics = existingStatistics.get();
+            statistics.setRedVotes(redVotes);
+            statistics.setBlueVotes(blueVotes);
+            statistics.setWinningVoteType(winningVoteType);
+            statistics.setRedVotePercentage(redVotePercentage);
+            statistics.setBlueVotePercentage(blueVotePercentage);
+        } else {
+            // 새 데이터 생성
+            statistics = PostStatistics.builder()
+                    .post(post)
+                    .redVotes(redVotes)
+                    .blueVotes(blueVotes)
+                    .winningVoteType(winningVoteType)
+                    .redVotePercentage(redVotePercentage)
+                    .blueVotePercentage(blueVotePercentage)
+                    .build();
+        }
+
+        return postStatisticsRepository.save(statistics);
     }
 
 }

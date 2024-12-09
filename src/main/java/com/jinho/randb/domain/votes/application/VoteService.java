@@ -5,7 +5,7 @@ import com.jinho.randb.domain.votes.dto.VoteResultDto;
 
 public interface VoteService {
 
-    void saveVote(VoteRequestDto voteRequest);
+    void saveVote(VoteRequestDto voteRequest, Long accountId);
 
     VoteResultDto getVoteResults(Long postId);
 

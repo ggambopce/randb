@@ -2,6 +2,7 @@ package com.jinho.randb.domain.post.api;
 
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
+import com.jinho.randb.domain.post.domain.PostStatistics;
 import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.domain.post.exception.PostException;
 import com.jinho.randb.global.exception.ErrorResponse;
@@ -171,6 +172,19 @@ public class PostController {
         }
 
     }
+
+    @PostMapping("/api/user/posts/{postId}/complete")
+    public ResponseEntity<?> completePost(@PathVariable("postId") Long postId) {
+        try {
+            PostStatistics statistics = postService.completePost(postId);
+            return ResponseEntity.ok(new ControllerApiResponse<>(true, "토론이 완료되었습니다.", statistics));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ControllerApiResponse<>(false, e.getMessage()));
+        }
+    }
+
+
+
 
     /*
     BindingResult 의 예외 Valid 여러곳의 사용되어서 메소드로 추출
