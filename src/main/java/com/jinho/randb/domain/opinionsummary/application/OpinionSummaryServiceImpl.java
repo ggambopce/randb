@@ -74,9 +74,6 @@ public class OpinionSummaryServiceImpl implements OpinionSummaryService {
         opinionSummaryRepository.save(redOpinionSummary);
         opinionSummaryRepository.save(blueOpinionSummary);
 
-        // Post 상태 변경: DISCUSSING -> VOTING
-        postService.updatePostType(postId, PostType.VOTING);
-
         // 요약된 내용 반환
         return Map.of(
                 "RED", redSummary,

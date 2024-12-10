@@ -3,6 +3,7 @@ package com.jinho.randb.domain.post.api;
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.domain.PostStatistics;
+import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostStatisticsResponseDto;
 import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.domain.post.exception.PostException;
@@ -178,6 +179,8 @@ public class PostController {
     public ResponseEntity<?> completePost(@PathVariable("postId") Long postId) {
         try {
             PostStatistics statistics = postService.completePost(postId);
+            // 상태를 COMPLETED로 변경
+            postService.updatePostType(postId, PostType.COMPLETED);
             return ResponseEntity.ok(new ControllerApiResponse<>(true, "토론이 완료되었습니다.", statistics));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new ControllerApiResponse<>(false, e.getMessage()));
