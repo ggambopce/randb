@@ -7,6 +7,8 @@ import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.domain.opinionsummary.application.OpinionSummaryService;
 import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryDto;
 import com.jinho.randb.domain.opinionsummary.dto.OpinionSummaryResponseDto;
+import com.jinho.randb.domain.post.application.PostService;
+import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.exception.PostException;
 import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.payload.ControllerApiResponse;
@@ -46,6 +48,7 @@ import static com.jinho.randb.domain.post.api.PostController.getErrorResponseRes
 public class OpinionSummaryController {
 
     private final OpinionSummaryService opinionSummaryService;
+    private final PostService postService;
 
 
     @Operation(summary = "의견요약 작성 API", description = "의견요약 작성", tags = {"일반 사용자 토론글 컨트롤러"})
@@ -61,9 +64,9 @@ public class OpinionSummaryController {
     public ResponseEntity<?> opinionSummaryAdd(@RequestParam("postId") Long postId){
 
         try{
-
             // 의견 요약 저장 및 토론글 상태 변경
             Map<String, String> summaries = opinionSummaryService.summarizeAndSave(postId);
+            postService.updatePostType(postId,PostType.VOTING);
 
             return  ResponseEntity.ok(new ControllerApiResponse<>(true,"요약글 작성 성공 및 상태 변경 완료", summaries));
         } catch (NoSuchElementException e) {

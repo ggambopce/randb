@@ -180,8 +180,7 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NoSuchElementException("해당 게시글을 찾을 수 없습니다."));
 
-        // 상태를 COMPLETED로 변경
-        post.updatePostType(PostType.COMPLETED);
+
         post.setCompletedAt(LocalDateTime.now());
         postRepository.save(post);
 
