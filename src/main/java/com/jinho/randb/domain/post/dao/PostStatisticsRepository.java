@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface PostStatisticsRepository extends JpaRepository<PostStatistics, Long> {
     Optional<PostStatistics> findByPost(Post post);
+
+    Optional<PostStatistics> findByPostId(Long postId);
 }

@@ -3,6 +3,7 @@ package com.jinho.randb.domain.post.api;
 import com.jinho.randb.domain.post.application.PostService;
 import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.domain.PostStatistics;
+import com.jinho.randb.domain.post.dto.PostStatisticsResponseDto;
 import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.domain.post.exception.PostException;
 import com.jinho.randb.global.exception.ErrorResponse;
@@ -183,7 +184,11 @@ public class PostController {
         }
     }
 
-
+    @GetMapping("/api/user/posts/{postId}/statistics")
+    public ResponseEntity<PostStatisticsResponseDto> getPostStatistics(@PathVariable("postId") Long postId) {
+        PostStatisticsResponseDto responseDto = postService.getPostStatistics(postId);
+        return ResponseEntity.ok(responseDto);
+    }
 
 
     /*
