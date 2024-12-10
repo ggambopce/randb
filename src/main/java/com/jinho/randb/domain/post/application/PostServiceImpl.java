@@ -10,6 +10,7 @@ import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.domain.PostStatistics;
 import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostDto;
+import com.jinho.randb.domain.post.dto.PostStatisticsResponseDto;
 import com.jinho.randb.domain.post.dto.user.*;
 import com.jinho.randb.domain.votes.dao.VoteRepository;
 import com.jinho.randb.domain.votes.domain.VoteType;
@@ -222,5 +223,20 @@ public class PostServiceImpl implements PostService {
 
         return postStatisticsRepository.save(statistics);
     }
+
+    @Override
+    public PostStatisticsResponseDto getPostStatistics(Long postId) {
+        PostStatistics statistics = postStatisticsRepository.findByPostId(postId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 통계가 존재하지 않습니다."));
+
+        return new PostStatisticsResponseDto(
+                statistics.getRedVotes(),
+                statistics.getBlueVotes(),
+                statistics.getWinningVoteType(),
+                statistics.getRedVotePercentage(),
+                statistics.getBlueVotePercentage()
+        );
+    }
+
 
 }
