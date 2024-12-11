@@ -3,7 +3,7 @@
 <br/>
 
 ## 📮 관련 링크 주소
-> 유튜브 : [프로젝트 3단계 ChatGPT를 활용한 의견요약 기능구현 REACT & Spring 연결 바로가기](https://www.youtube.com/shorts/58JxkTnWGrE)<br>
+> 유튜브 : [프로젝트 3단계 ChatGPT를 활용한 의견요약 기능구현 REACT & Spring 연결 바로가기](https://youtu.be/OeBHEOB6EWI?si=VS4LHa7rhg7lk7mJ)<br>
 > 유튜브 : [프로젝트 2단계 스프링 시큐리티 기능 소개 바로가기](https://youtu.be/6JxF50EOD-c?si=o4SoZmt29BsFlRUU)<br>
 > 유튜브 : [프로젝트 1단계 GPT API 기능 소개 바로가기](https://youtu.be/xuX7EdBltCo)<br>
 > 유튜브 : [프로젝트 시큐리티 비동기인증 기능 소개 바로가기](https://youtu.be/48NNRVa8L94?si=W10ZhFbLQB2mss6o)<br>
