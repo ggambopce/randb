@@ -36,6 +36,7 @@ out/
 
 ### VS Code ###
 .vscode/
+<<<<<<< HEAD
 .DS_Store
 
 # Ignore all yml files
@@ -44,3 +45,6 @@ out/
 # If you want to ignore only specific yml files (like application.yml)
 application.yml
 application-test.yml
+=======
+src/main/resources/application.yml
+>>>>>>> 56592fb (gitipnore)
