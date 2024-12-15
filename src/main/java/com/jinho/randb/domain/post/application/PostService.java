@@ -4,7 +4,10 @@ import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.domain.PostStatistics;
 import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostStatisticsResponseDto;
-import com.jinho.randb.domain.post.dto.user.*;
+import com.jinho.randb.domain.post.dto.request.UserAddRequest;
+import com.jinho.randb.domain.post.dto.request.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.response.*;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -20,7 +23,7 @@ public interface PostService {
 
     PostDetailResponse getPostDetail(Long postId);
 
-    List<Post> findAll();
+    PostResponse findAll(Integer lastCount, Long lastId, Pageable pageable);
 
     MainPagePostResponse mainPagePost();
 

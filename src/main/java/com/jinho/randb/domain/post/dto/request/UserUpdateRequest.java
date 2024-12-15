@@ -1,4 +1,4 @@
-package com.jinho.randb.domain.post.dto.user;
+package com.jinho.randb.domain.post.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

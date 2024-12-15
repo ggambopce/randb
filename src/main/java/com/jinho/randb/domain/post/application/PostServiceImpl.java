@@ -2,7 +2,6 @@ package com.jinho.randb.domain.post.application;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
-import com.jinho.randb.domain.account.dto.AccountContext;
 import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
 import com.jinho.randb.domain.post.dao.PostStatisticsRepository;
@@ -11,7 +10,9 @@ import com.jinho.randb.domain.post.domain.PostStatistics;
 import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostDto;
 import com.jinho.randb.domain.post.dto.PostStatisticsResponseDto;
-import com.jinho.randb.domain.post.dto.user.*;
+import com.jinho.randb.domain.post.dto.request.UserAddRequest;
+import com.jinho.randb.domain.post.dto.request.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.response.*;
 import com.jinho.randb.domain.votes.dao.VoteRepository;
 import com.jinho.randb.domain.votes.domain.VoteType;
 import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
@@ -90,9 +91,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> findAll() {
-        return postRepository.findAll();
+    public PostResponse findAll(Integer lastCount, Long lastId, Pageable pageable) {
+
+        // Repository에서 페이징된 데이터를 조회
+        Slice<PostDto> postDtoSlice = postRepository.findAllWithPage(lastCount, lastId, pageable);
+        // 다음 페이지 여부와 데이터 리스트를 사용해 PostResponse 반환
+        return new PostResponse(postDtoSlice.hasNext(), postDtoSlice.getContent());
+
     }
+
 
     @Override
     public PostResponse postPage(Long postId, Pageable pageable) {

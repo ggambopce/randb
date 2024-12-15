@@ -1,4 +1,4 @@
-package com.jinho.randb.domain.post.dto.user;
+package com.jinho.randb.domain.post.dto.response;
 
 import com.jinho.randb.domain.post.dto.PostDto;
 import lombok.Data;

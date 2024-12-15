@@ -5,14 +5,16 @@ import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.domain.post.domain.PostStatistics;
 import com.jinho.randb.domain.post.domain.PostType;
 import com.jinho.randb.domain.post.dto.PostStatisticsResponseDto;
-import com.jinho.randb.domain.post.dto.user.*;
+import com.jinho.randb.domain.post.dto.request.UserAddRequest;
+import com.jinho.randb.domain.post.dto.request.UserUpdateRequest;
+import com.jinho.randb.domain.post.dto.response.*;
 import com.jinho.randb.domain.post.exception.PostException;
 import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.exception.ex.BadRequestException;
 import com.jinho.randb.global.payload.ControllerApiResponse;
-import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,8 +26,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,6 @@ import org.springframework.web.server.ServerErrorException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -192,6 +191,17 @@ public class PostController {
         PostStatisticsResponseDto responseDto = postService.getPostStatistics(postId);
         return ResponseEntity.ok(responseDto);
     }
+
+    @GetMapping("/api/user/posts")
+    public ResponseEntity<?> getPosts(@RequestParam(value = "lastCount", required = false)Integer lastCount,
+                                      @RequestParam(value = "lastId", required = false)Long lastId,
+                                      @Parameter Pageable pageable) {
+        PostResponse postResponse = postService.findAll(lastCount, lastId, pageable);
+        return  ResponseEntity.ok(new ControllerApiResponse<>(true,"검색성공",postResponse));
+    }
+
+
+
 
 
     /*

@@ -13,4 +13,6 @@ public interface CustomPostRepository {
     Slice<PostDto> getAllPost(Long postId, Pageable pageable);
 
     List<PostDto> mainPagePost();
+
+    Slice<PostDto> findAllWithPage(Integer lastCount, Long lastId, Pageable pageable);
 }

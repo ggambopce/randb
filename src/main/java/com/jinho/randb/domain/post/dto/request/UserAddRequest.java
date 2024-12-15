@@ -1,4 +1,4 @@
-package com.jinho.randb.domain.post.dto.user;
+package com.jinho.randb.domain.post.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

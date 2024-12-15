@@ -35,6 +35,15 @@ public class PostDto {
         return new PostDto(id, postTitle, postContent, null, type);
     }
 
+    public static PostDto fromEntity(Post post) {
+        return new PostDto(post.getId(),
+                post.getPostTitle(),
+                post.getPostContent(),
+                post.getAccount().getUsername(),
+                post.getType()
+        );
+    }
+
     public static PostDto of(Post post){
         return new PostDto(
                 post.getId(),

@@ -104,6 +104,27 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 )).collect(Collectors.toList());
     } //from은 정적 팩토리 메서드로 new 키워드를 사용하는 것과는 다른 방식. 팩토리 메서드는 new 없이 호출
 
+    @Override
+    public Slice<PostDto> findAllWithPage(Integer lastCount, Long lastId, Pageable pageable) {
+        // 동적 조건 없이 전체 데이터를 페이징 처리
+        List<Post> posts = jpaQueryFactory
+                .selectFrom(post)
+                .offset(pageable.getOffset()) // 시작 위치
+                .limit(pageable.getPageSize() + 1) // 페이지 크기 + 1 (다음 페이지 확인용)
+                .fetch();
+
+        // Post 엔티티를 PostDto로 변환
+        List<PostDto> postDtos = posts.stream()
+                .map(PostDto::fromEntity)
+                .collect(Collectors.toList());
+
+        // 다음 페이지 여부 확인
+        boolean hasNext = isHasNextSize(pageable, postDtos);
+
+        // Slice로 반환
+        return new SliceImpl<>(postDtos, pageable, hasNext);
+
+    }
 
     private static boolean isHasNextSize(Pageable pageable, List<PostDto> collect) {
         boolean hasNextSize = false;
