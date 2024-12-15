@@ -105,7 +105,7 @@ public class PostServiceImpl implements PostService {
     public PostResponse postPage(Long postId, Pageable pageable) {
 
         Slice<PostDto> allPost = postRepository.getAllPost(postId, pageable);
-
+        // 다음 페이지 여부 및 현재 페이지 데이터를 `PostResponse`로 반환
         return new PostResponse(allPost.hasNext(),allPost.getContent());
     }
 

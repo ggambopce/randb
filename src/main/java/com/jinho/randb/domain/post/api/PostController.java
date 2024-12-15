@@ -75,18 +75,6 @@ public class PostController {
 
     }
 
-    @Operation(summary = "전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.(페이지네이션)", tags = {"일반 사용자 토론글 컨트롤러"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = Post.class),
-                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}")))
-    })
-    @GetMapping("/api/posts")
-    public ResponseEntity<?> findAllPost(@RequestParam(value = "postId", required = false) Long postId, Pageable pageable) {
-        PostResponse postResponse = postService.postPage(postId, pageable);
-        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
-    }
-
     @Operation(summary = "메인페이지 전체 토론글 조회 API", description = "토론글의 전체 목록을 조회할 수 있습니다.", tags = {"일반 사용자 토론글 컨트롤러"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
@@ -192,14 +180,47 @@ public class PostController {
         return ResponseEntity.ok(responseDto);
     }
 
+
+    @Operation(
+            summary = "게시물 페이징 조회",
+            description = "게시물 목록을 페이징 처리하여 조회합니다. 페이지 정보와 요청 필터(lastCount, lastId)를 기반으로 결과를 반환합니다.",
+            tags = {"일반 사용자 토론글 컨트롤러"},
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "페이징 조회 성공",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ControllerApiResponse.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "서버 오류", content = @Content)
+            }
+    )
     @GetMapping("/api/user/posts")
     public ResponseEntity<?> getPosts(@RequestParam(value = "lastCount", required = false)Integer lastCount,
                                       @RequestParam(value = "lastId", required = false)Long lastId,
                                       @Parameter Pageable pageable) {
         PostResponse postResponse = postService.findAll(lastCount, lastId, pageable);
-        return  ResponseEntity.ok(new ControllerApiResponse<>(true,"검색성공",postResponse));
+        return  ResponseEntity.ok(new ControllerApiResponse<>(true,"페이징 조회 성공",postResponse));
     }
 
+
+    @Operation(
+            summary = "전체 토론글 조회 API",
+            description = "토론글의 전체 목록을 조회할 수 있습니다.(무한페이징)",
+            tags = {"일반 사용자 토론글 컨트롤러"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = Post.class),
+                            examples = @ExampleObject(value = "{\"success\": true, \"message\" : \"조회 성공\",\"posts\":[{\"id\":23, \"postTitle\" : \"새로운 토론 주제\",\"postContent\" : \"이것은 토론의 내용입니다.\"}]}"))),
+            @ApiResponse(responseCode = "400", description = "BAD REQUEST",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class),
+                            examples =  @ExampleObject(value = "{\"success\": false, \"message\": \"잘못된 요청입니다.\"}")))
+    })
+    @GetMapping("/api/posts")
+    public ResponseEntity<?> findAllPost(@RequestParam(value = "postId", required = false) Long postId, Pageable pageable) {
+        PostResponse postResponse = postService.postPage(postId, pageable);
+        return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", postResponse));
+    }
 
 
 

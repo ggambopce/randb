@@ -46,46 +46,40 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     }
 
-    /**
-     * 게시글을 페이지네이션 방식으로 페이징 처리 (no-offset 방식 사용)
-     * @param postId 마지막으로 조회된 게시글의 ID
-     * @param pageable 페이지 정보
-     * @return Slice<PostDto> 페이징 결과
-     */
+
     @Override
     public Slice<PostDto> getAllPost(Long postId, Pageable pageable) {
 
-        // 동적 쿼리: postId가 주어졌다면 해당 ID 이후의 게시글을 조회하는 조건
-        // BooleanBuilder는 동적 쿼리 조건을 쌓는 데 사용
+        // 동적 쿼리 조건 생성
         BooleanBuilder builder = new BooleanBuilder();
         if (postId != null) {
-            builder.and(post.id.gt(postId)); // postId 이후의 게시글을 조회
+            builder.and(post.id.gt(postId)); // postId 이후의 게시글만 조회
         }
 
-        // QueryDSL을 사용하여 동적 쿼리 실행 및 페이징 처리
+        // QueryDSL을 사용해 데이터 조회
         List<Tuple> list = jpaQueryFactory.select(post.id, post.postTitle, post.postContent, post.type, post.createdAt, account.username)
                 .from(post)
-                .leftJoin(post.account, account) // post.account와 account를 조인
+                .leftJoin(post.account, account) // 게시글 작성자와 조인
                 .where(builder)
-                .orderBy(post.createdAt.desc())
-                .limit(pageable.getPageSize() + 1)
+                .orderBy(post.createdAt.desc()) // 생성일 기준 내림차순 정렬
+                .limit(pageable.getPageSize() + 1) // 페이지 크기 + 1로 데이터 조회
                 .fetch();
 
-        // Tuple 데이터를 PostDto로 변환하여 리스트로 수집
+        // 조회된 Tuple 데이터를 PostDto로 변환
         List<PostDto> collect = list.stream()
-                .map(tuple -> new PostDto(tuple.get(post.id),
+                .map(tuple -> new PostDto(
+                        tuple.get(post.id),
                         tuple.get(post.postTitle),
                         tuple.get(post.postContent),
                         tuple.get(account.username),
-                        tuple.get(post.type) // 토론글 상태
-                        ))   // username 추가
+                        tuple.get(post.type)
+                ))
                 .collect(Collectors.toList());
 
-        // 다음 페이지가 있는지 확인
+        // 다음 페이지 여부 확인
         boolean hasNext = isHasNextSize(pageable, collect);
 
-        // SliceImpl을 반환하여 페이징 처리된 결과를 클라이언트에 제공
-        // Slice는 Page와 달리 전체 데이터 개수를 신경 쓰지 않고, 단순히 다음 페이지가 있는지만 확인
+        // Slice로 반환
         return new SliceImpl<>(collect, pageable, hasNext);
     }
 
