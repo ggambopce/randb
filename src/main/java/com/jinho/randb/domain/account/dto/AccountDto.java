@@ -59,7 +59,7 @@ public class AccountDto {
                 .password(accountDto.getPassword())
                 .email(accountDto.getEmail())
                 .join_date(LocalDate.now())
-                .nickName(accountDto.getNickname())
+                .nickname(accountDto.getNickname())
                 .username(accountDto.getUsername())
                 .join_date(accountDto.getJoin_date())
                 .roles("ROLE_USER")
@@ -68,11 +68,12 @@ public class AccountDto {
                 .build();
     }
 
-    private AccountDto(Long accountId, String loginId, String email, String username, LocalDate join_date) {
+    private AccountDto(Long accountId, String loginId, String email, String username, String nickname, LocalDate join_date) {
         this.id = accountId;
         this.loginId = loginId;
         this.email = email;
         this.username = username;
+        this.nickname = nickname;
         this.join_date = join_date;
     }
 
@@ -81,6 +82,7 @@ public class AccountDto {
                 .id(account.getId())
                 .loginId(account.getLoginId())
                 .username(account.getUsername())
+                .nickname(account.getNickname())
                 .password(account.getPassword())
                 .email(account.getEmail())
                 .roles(account.getRoles())
@@ -88,8 +90,8 @@ public class AccountDto {
                 .build();
     }
 
-    public static AccountDto of(Long accountId, String loginId, String email, String username, LocalDate join_date) {
-        return new AccountDto(accountId, loginId, email, username, join_date);
+    public static AccountDto of(Long accountId, String loginId, String email, String username, String nickname, LocalDate join_date) {
+        return new AccountDto(accountId, loginId, email, username, nickname, join_date);
     }
 
 }

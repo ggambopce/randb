@@ -38,8 +38,7 @@ public class Account {
 
     private String username;
 
-    @Column(name = "nick_name")
-    private String nickName;
+    private String nickname;
 
     private String password;
 
