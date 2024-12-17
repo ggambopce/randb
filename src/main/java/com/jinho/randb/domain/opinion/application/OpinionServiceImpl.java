@@ -2,16 +2,13 @@ package com.jinho.randb.domain.opinion.application;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
-import com.jinho.randb.domain.account.dto.AccountContext;
 import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.opinion.dao.OpinionRepository;
 import com.jinho.randb.domain.opinion.domain.Opinion;
 import com.jinho.randb.domain.opinion.dto.AddOpinionRequest;
 import com.jinho.randb.domain.opinion.dto.OpinionContentAndTypeDto;
-import com.jinho.randb.domain.opinion.dto.OpinionDto;
 import com.jinho.randb.domain.opinion.dto.UserUpdateOpinionDto;
 import com.jinho.randb.domain.post.dao.PostRepository;
-import com.jinho.randb.domain.post.domain.Post;
 import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional

@@ -2,7 +2,7 @@ package com.jinho.randb.global.security.oauth2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jinho.randb.domain.account.application.AccountService;
+import com.jinho.randb.domain.account.application.user.AccountService;
 import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.global.security.oauth2.provider.Oauth2UrlProvider;
 import lombok.RequiredArgsConstructor;

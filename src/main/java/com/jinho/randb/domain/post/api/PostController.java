@@ -12,6 +12,7 @@ import com.jinho.randb.domain.post.exception.PostException;
 import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.exception.ex.BadRequestException;
 import com.jinho.randb.global.payload.ControllerApiResponse;
+import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +57,7 @@ public class PostController {
                             examples = @ExampleObject(value = "{\"success\": false, \"message\" : \"모든 값을 입력해 주세요\"}")))
     })
     @PostMapping(value = "/api/user/posts")
-    public ResponseEntity<?> postAdd(@Valid @RequestBody UserAddRequest userAddPostDto, BindingResult bindingResult){
+    public ResponseEntity<?> postAdd(@Valid @RequestBody UserAddRequest userAddPostDto, BindingResult bindingResult, @AuthenticationPrincipal PrincipalDetails principalDetails){
 
         try{
             // 요청 유효성 검사
@@ -63,7 +65,7 @@ public class PostController {
             if (errorMap != null) return errorMap;
 
             // 게시글 저장
-            postService.save(userAddPostDto);
+            postService.save(userAddPostDto, principalDetails.getAccountDto().getId());
 
             return ResponseEntity.ok(new ControllerApiResponse(true, "작성 성공"));
         } catch (NoSuchElementException e) {
@@ -182,7 +184,7 @@ public class PostController {
 
 
     @Operation(
-            summary = "게시물 페이징 조회",
+            summary = "게시물 페이징 조회 API",
             description = "게시물 목록을 페이징 처리하여 조회합니다. 페이지 정보와 요청 필터(lastCount, lastId)를 기반으로 결과를 반환합니다.",
             tags = {"일반 사용자 토론글 컨트롤러"},
             responses = {

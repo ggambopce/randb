@@ -1,5 +1,6 @@
-package com.jinho.randb.domain.account.dto;
+package com.jinho.randb.global.jwt.dto;
 
+import com.jinho.randb.domain.account.dto.AccountDto;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

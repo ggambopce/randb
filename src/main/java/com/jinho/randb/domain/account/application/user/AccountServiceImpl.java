@@ -1,5 +1,6 @@
-package com.jinho.randb.domain.account.application;
+package com.jinho.randb.domain.account.application.user;
 
+import com.jinho.randb.domain.account.application.user.AccountService;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.account.dto.AccountDto;
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
 
     private static String LOGIN_TYPE = "normal";
 

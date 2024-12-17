@@ -43,19 +43,7 @@ public class PostServiceImpl implements PostService {
     private final PostStatisticsRepository postStatisticsRepository;
 
     @Override
-    public void save(UserAddRequest userAddRequest) {
-        // SecurityContextHolder에서 현재 로그인된 사용자 정보 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Principal 객체를 안전하게 캐스팅
-        Object principal = authentication.getPrincipal();
-        if (!(principal instanceof PrincipalDetails principalDetails)) {
-            throw new IllegalStateException("인증된 사용자 정보가 PrincipalDetails 타입이 아닙니다.");
-        }
-
-        // PrincipalDetails에서 AccountDto 가져오기
-        AccountDto accountDto = principalDetails.getAccountDto();
-        Long accountId = accountDto.getId();
+    public void save(UserAddRequest userAddRequest, Long accountId) {
 
         // Account 조회
         Account account = accountRepository.findById(accountId)
@@ -80,7 +68,7 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * 레시피의 상세정보를 보는 로직,
+     * 토론글의 상세정보를 보는 로직,
      * @param postId  찾을 토론글 번호
      * @return      Response로 변환해 해당 토론글의 상세 정보를 반환
      */
@@ -90,6 +78,11 @@ public class PostServiceImpl implements PostService {
         return PostDetailResponse.of(postDetail.toDto());
     }
 
+    /**
+     * 토론글을 전체조회하는 로직(페이지네이션)
+     * @param
+     * @return      Response로 변환해 해당 토론글 전체목록을 반환
+     */
     @Override
     public PostResponse findAll(Integer lastCount, Long lastId, Pageable pageable) {
 
@@ -101,6 +94,11 @@ public class PostServiceImpl implements PostService {
     }
 
 
+    /**
+     * 토론글을  전제조회하는 로직(무한페이징),
+     * @param postId  찾을 토론글 번호
+     * @return Response로 변환해 해당 토론글 전체목록을 반환
+     */
     @Override
     public PostResponse postPage(Long postId, Pageable pageable) {
 

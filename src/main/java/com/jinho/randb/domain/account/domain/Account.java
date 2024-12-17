@@ -12,10 +12,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
+@Table(indexes = {
+        @Index(name = "idx_member_login_id",columnList = "login_id")
+})
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(exclude = {"posts"})
 public class Account {
 
 
@@ -25,19 +29,21 @@ public class Account {
     private Long id;
 
     @Column(unique = true)
-    String loginId;
-    String email;
+    private String loginId;
+    private String email;
     @JsonIgnore
     @Column(nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
-    String roles;
-    String login_type;
+    private String roles;
+    private String login_type;
 
-    @Column(name = "username")
     private String username;
-    @Column(name = "password")
+
+    @Column(name = "nick_name")
+    private String nickName;
+
     private String password;
 
-    LocalDate join_date;
+    private LocalDate join_date;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;

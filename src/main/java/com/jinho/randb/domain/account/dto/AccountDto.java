@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
+@Schema(name="사용자 DTO")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,51 +23,48 @@ import java.time.LocalDateTime;
 public class AccountDto {
 
     @Schema(nullable = true,hidden = true)
-    Long id;
+    private Long id;
 
-    @NotEmpty(message = "이름을 입력주세요")
-    @Pattern(regexp = "^[가-힣]+.{1,}$",message = "이름을 정확이 입력해주세요")
-    @Schema(description = "사용자 실명",example = "홍길동")
-    String username;
+    private String username;
 
-    @NotEmpty(message = "비밀번호를 입력해주세요")
-    @Schema(description = "비밀번호",example = "1234")
-    String password;
+    private String nickname;
 
-    @NotEmpty(message = "아이디를 입력해주세요")
-    @Pattern(regexp = "^[a-zA-Z0-9]{5,16}$", message = "올바른 아이디를 입력해주세요")
-    @Schema(description = "로그인 아이디",example = "exampleId")
-    String loginId;
+    private String password;
 
-    @NotEmpty(message = "이메일을 입력해주세요.")
-    @Pattern(regexp = "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.(com|net)$", message = "올바른 이메일 형식이어야 합니다.")
-    @Schema(description = "이메일",example = "test@naver.com")
-    String email;
+    private String passwordRe;
+
+    private String loginId;
+
+    private String email;
 
     @JsonIgnore
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    String roles;
+    private String roles;
 
     @JsonIgnore
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    LocalDate join_date;
+    private LocalDate join_date;
 
     @JsonIgnore
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    String login_type;
+    private String login_type;
 
     @JsonIgnore
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private boolean verified;
+
+    @JsonIgnore
+    private Integer code;
 
     public Account toEntity(AccountDto accountDto) {
         return Account.builder()
                 .id(accountDto.getId())
                 .loginId(accountDto.getLoginId())
+                .password(accountDto.getPassword())
                 .email(accountDto.getEmail())
+                .join_date(LocalDate.now())
+                .nickName(accountDto.getNickname())
                 .username(accountDto.getUsername())
                 .join_date(accountDto.getJoin_date())
-                .login_type(accountDto.getLogin_type())
+                .roles("ROLE_USER")
+                .login_type("normal")
+                .verified(true)
                 .build();
     }
 

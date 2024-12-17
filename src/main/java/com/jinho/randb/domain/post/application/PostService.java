@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public interface PostService {
 
-    void save(UserAddRequest userAddPostDto);
+    void save(UserAddRequest userAddPostDto, Long accountId);
 
     PostResponse postPage(Long postId, Pageable pageable);
 

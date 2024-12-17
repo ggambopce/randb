@@ -1,4 +1,4 @@
-package com.jinho.randb.domain.account.application;
+package com.jinho.randb.domain.account.application.user;
 
 
 import com.jinho.randb.domain.account.dto.AccountDto;

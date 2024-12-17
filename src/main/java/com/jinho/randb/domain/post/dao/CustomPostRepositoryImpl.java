@@ -26,9 +26,7 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     /**
-     * 해당 id 토론글 데이터를 가져와서 PostDto로 변환
-     * @param postId
-     * @return postDTO
+     * 토론글의 상세 정보를 위해 게시글의 id를 통해서 해당 토론글 조회
      */
     @Override
     public PostDto getPostDetail(Long postId) {
@@ -46,7 +44,9 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
 
     }
 
-
+    /**
+     * 토론글의 대해서 무한 페이징을 통해 페이징 처리 no-offset 방식을 사용(무한스크롤)
+     */
     @Override
     public Slice<PostDto> getAllPost(Long postId, Pageable pageable) {
 
@@ -98,6 +98,11 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
                 )).collect(Collectors.toList());
     } //from은 정적 팩토리 메서드로 new 키워드를 사용하는 것과는 다른 방식. 팩토리 메서드는 new 없이 호출
 
+    /**
+     * 토론글 전체 조회 (페이지네이션)
+     * @param lastCount, lastId, pageable
+     * @return
+     */
     @Override
     public Slice<PostDto> findAllWithPage(Integer lastCount, Long lastId, Pageable pageable) {
         // 동적 조건 없이 전체 데이터를 페이징 처리
@@ -128,7 +133,5 @@ public class CustomPostRepositoryImpl implements CustomPostRepository {
         }
         return hasNextSize;
     }
-
-
 
 }

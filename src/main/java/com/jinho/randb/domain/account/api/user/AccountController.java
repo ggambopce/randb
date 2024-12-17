@@ -1,8 +1,7 @@
-package com.jinho.randb.domain.account.api;
+package com.jinho.randb.domain.account.api.user;
 
 
-import com.jinho.randb.domain.account.application.AccountService;
-import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.domain.account.application.user.AccountService;
 import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.global.exception.ErrorResponse;
 import com.jinho.randb.global.exception.ex.BadRequestException;
@@ -18,8 +17,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
