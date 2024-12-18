@@ -34,7 +34,7 @@ public class Account {
     @JsonIgnore
     @Column(nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
     private String roles;
-    private String login_type;
+    private String loginType;
 
     private String username;
 
@@ -42,7 +42,7 @@ public class Account {
 
     private String password;
 
-    private LocalDate join_date;
+    private LocalDate createAt;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean verified;
