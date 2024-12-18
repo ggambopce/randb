@@ -3,13 +3,16 @@ package com.jinho.randb.domain.account.application.user;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.account.dto.AccountDto;
+import com.jinho.randb.domain.email.application.EmailService;
 import com.jinho.randb.global.exception.ex.InvalidIdException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -22,6 +25,9 @@ public class SignUpServiceImpl implements SignUpService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Qualifier("JoinEmail")
+    private final EmailService emailService;
 
     // 필드명 상태값 상수로 정의
     private static final String DUPLICATE_EMAIL = "duplicatrEmail";
@@ -43,9 +49,23 @@ public class SignUpServiceImpl implements SignUpService {
         accountRepository.save(entity);
     }
 
+    /**
+     * 회원가입시 모든 조건검사를 하지 않았을때 회원가입을 하지 못함.
+     * @param accountDto 회원가입의 정보
+     * @return  모두 사용시 true, 하나라도 검사 안했을시 false
+     */
     @Override
     public boolean ValidationOfSignUp(AccountDto accountDto) {
-        return false;
+        Map<String, Boolean> validationResult = validateSignUp(accountDto);
+
+        for (Map.Entry<String, Boolean> entry : validationResult.entrySet()) {
+            if (!entry.getValue()) {
+                log.error("Failed validation: {}", entry.getKey());
+                return false;
+            }
+        }
+        emailService.deleteCode(accountDto.getEmail(), accountDto.getCode());
+        return true;
     }
 
     /**
@@ -72,7 +92,14 @@ public class SignUpServiceImpl implements SignUpService {
             throw new InvalidIdException("사용 불가능한 닉네임입니다.");
         }
     }
-
+    /**
+     * 회원가입시 이메일 인증번호 유효성 검사
+     * @param code
+     * @return 인증 성공시 true, 실패시 false
+     */
+    private Map<String, Boolean> verifyCode(String email, int code){
+        return emailService.verifyCode(email,code);
+    }
 
     /**
      * 이메일주소가 올바른 주소인지 확인
@@ -93,9 +120,51 @@ public class SignUpServiceImpl implements SignUpService {
         return result;
     }
 
+    /**
+     * 회원가입시 오류 메시지를 추출하는 메서드
+     * 비밀번호 중복검사, 이메일 중복검사, 아이디 중복검사를 최종적으로 한번 더하는 메서드
+     */
     @Override
     public Map<String, String> ValidationErrorMessage(AccountDto accountDto) {
-        return null;
+        Map<String, Boolean> validationResult = validateSignUp(accountDto);
+        Map<String, String> errorMessages = new HashMap<>();
+
+        validationResult.forEach((key, value) -> {
+            if (!value) {
+                switch (key) {
+                    case DUPLICATE_PASSWORD:
+                        errorMessages.put(PASSWORD_RE, "비밀번호가 일치하지 않습니다.");
+                        break;
+                    case IS_LOGIN_VALID:
+                        errorMessages.put(LOGIN_ID, "중복된 아이디입니다.");
+                        break;
+                    case DUPLICATE_EMAIL:
+                        errorMessages.put(EMAIL, "중복된 이메일입니다.");
+                        break;
+                    default:
+                        errorMessages.put(CODE, "인증 번호가 일치하지 않습니다.");
+                }
+            }
+        });
+
+        return errorMessages;
+    }
+
+    /**
+     회원가입 정보를 검증하는 메서드로, 사용자가 제출한 회원가입 폼의 데이터를 기반으로 각각의 조건을 검사하여 결과를 반환.
+     반환된 결과는 각 검증 항목의 이름과 검증 결과로 이루어진 맵 형태로 제공한다.
+     @param accountDto 검증할 회원 정보가 포함된 MemberDto 객체
+     @return 각 검증 항목의 이름과 해당 검증 결과로 이루어진 맵
+     */
+    private Map<String, Boolean> validateSignUp(AccountDto accountDto) {
+        Map<String, Boolean> validationResult = new LinkedHashMap<>();
+        validationResult.put(IS_LOGIN_VALID,!isLoginIdDuplicated(accountDto.getLoginId()));
+        validationResult.putAll(duplicatePassword(accountDto.getPassword(), accountDto.getPasswordRe()));
+        validationResult.put(DUPLICATE_EMAIL,!isDuplicateEmail(accountDto.getEmail()));
+        validationResult.putAll(emailValid(accountDto.getEmail()));
+        validationResult.putAll(verifyCode(accountDto.getEmail(), accountDto.getCode()));
+
+        return validationResult;
     }
 
 

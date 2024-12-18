@@ -88,7 +88,7 @@ public class JoinEmailServiceImpl implements EmailService{
      */
     private void sendEmailVerification(String email) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setSubject("RED & BLUE 회원가입 인증번호."); // 이메일 제목 설정
+        message.setSubject("RED & BLUE 회원가입 인증번호"); // 이메일 제목 설정
         message.setText(getText()); // 이메일 내용 설정
         message.setFrom(emailFrom); // 발신자 이메일 주소 설정
         message.setTo(email); // 수신자 이메일 주소 설정
