@@ -28,7 +28,7 @@ public class JoinEmailServiceImpl implements EmailService{
 
     /**
      * 이메일을 전송하기위한 메서드
-     * 이멤일을 전송하면 인증번호를 반환 합니다.
+     * 이메일을 전송하면 인증번호를 반환 합니다.
      */
     public String sendMailMessage(String email){
         code=createCode();
@@ -88,7 +88,7 @@ public class JoinEmailServiceImpl implements EmailService{
      */
     private void sendEmailVerification(String email) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setSubject("요리 공유소 회원가입 인증번호 안내."); // 이메일 제목 설정
+        message.setSubject("RED & BLUE 회원가입 인증번호."); // 이메일 제목 설정
         message.setText(getText()); // 이메일 내용 설정
         message.setFrom(emailFrom); // 발신자 이메일 주소 설정
         message.setTo(email); // 수신자 이메일 주소 설정
@@ -101,11 +101,11 @@ public class JoinEmailServiceImpl implements EmailService{
      */
     private String getText(){
         StringBuffer buffer = new StringBuffer();
-        buffer.append("회원 가입을 진행하기 위해서 아래절차를 따라해주세요. "); // 회원 가입 안내 메시지 추가
-        buffer.append("아래의 코드를 인증번호 칸에 입력해주세요. "); // 회원 가입 안내 메시지 추가
+        buffer.append("회원 가입을 진행하기 위해서 다음 절차를 따라해주세요. "); // 회원 가입 안내 메시지 추가
+        buffer.append("다음의 6자리 코드를 인증번호란에 입력해주세요. "); // 회원 가입 안내 메시지 추가
         buffer.append(code);
         buffer.append(System.lineSeparator()).append(System.lineSeparator()); // 공백 라인 추가
-        buffer.append("Regards,").append(System.lineSeparator()).append("요리 공유소"); // 문서 마무리 부분 추가
+        buffer.append("Regards,").append(System.lineSeparator()).append("JINO"); // 문서 마무리 부분 추가
         return buffer.toString(); // 완성된 이메일 내용 반환
     }
 }

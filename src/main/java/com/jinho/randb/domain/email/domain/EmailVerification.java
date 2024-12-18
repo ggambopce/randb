@@ -23,7 +23,7 @@ public class EmailVerification {
     @Id
     @GeneratedValue(generator = "UUID_GENERATOR")
     @GenericGenerator(name = "UUID_GENERATER", strategy = "org.hibernate.id.UUIDGenerator")
-    private String verificationId;
+    private Long verificationId;
 
     private String username;
 
