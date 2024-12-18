@@ -1,4 +1,4 @@
-package com.jinho.randb.global.security.config;
+package com.jinho.randb.global.config;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.global.jwt.utils.JwtAuthorizationFilter;
