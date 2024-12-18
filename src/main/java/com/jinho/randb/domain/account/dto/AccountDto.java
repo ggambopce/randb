@@ -59,12 +59,12 @@ public class AccountDto { // 내부 로직 사용 객체
                 .loginId(accountDto.getLoginId())
                 .password(accountDto.getPassword())
                 .email(accountDto.getEmail())
-                .join_date(LocalDate.now())
+                .createAt(LocalDate.now())
                 .nickname(accountDto.getNickname())
                 .username(accountDto.getUsername())
-                .join_date(accountDto.getJoin_date())
+                .createAt(accountDto.getJoin_date())
                 .roles("ROLE_USER")
-                .login_type("normal")
+                .loginType("normal")
                 .verified(true)
                 .build();
     }
@@ -87,7 +87,7 @@ public class AccountDto { // 내부 로직 사용 객체
                 .password(account.getPassword())
                 .email(account.getEmail())
                 .roles(account.getRoles())
-                .login_type(account.getLogin_type())
+                .login_type(account.getLoginType())
                 .build();
     }
 

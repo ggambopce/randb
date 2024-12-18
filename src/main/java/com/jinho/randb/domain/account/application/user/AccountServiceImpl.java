@@ -32,9 +32,9 @@ public class AccountServiceImpl implements AccountService {
                 .loginId(accountDto.getLoginId())
                 .password(passwordEncoder.encode(accountDto.getPassword()))
                 .username(accountDto.getUsername())
-                .login_type(LOGIN_TYPE)
+                .loginType(LOGIN_TYPE)
                 .email(accountDto.getEmail())
-                .join_date(LocalDate.now())
+                .createAt(LocalDate.now())
                 .roles("ROLE_USER")
                 .verified(true)
                 .build();

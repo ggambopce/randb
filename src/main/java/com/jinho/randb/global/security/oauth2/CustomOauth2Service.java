@@ -59,8 +59,8 @@ public class CustomOauth2Service extends DefaultOAuth2UserService {
                     .loginId(id)
                     .username(name)
                     .email(email)
-                    .login_type(requestId)
-                    .join_date(LocalDate.now())
+                    .loginType(requestId)
+                    .createAt(LocalDate.now())
                     .verified(true).roles("ROLE_USER").build();
             Account save = accountRepository.save(user);
             return save;

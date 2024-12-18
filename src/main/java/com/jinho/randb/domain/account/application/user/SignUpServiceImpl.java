@@ -128,5 +128,6 @@ public class SignUpServiceImpl implements SignUpService {
     private boolean isLoginIdDuplicated(String loginId) {
         return  accountRepository.existsByLoginId(loginId);
     }
+
 }
-}
+
