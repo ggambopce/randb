@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Schema(name = "회원가입 Request")
-public class JoinRequest {
+public class JoinRequest { // 컨트롤러 요청 객체
 
     @NotEmpty(message = "이름을 입력주세요")
     @Pattern(regexp = "^[가-힣]+.{1,}$",message = "이름을 정확이 입력해주세요")
@@ -44,6 +44,7 @@ public class JoinRequest {
     @Schema(description = "이메일 인증번호",example = "123456")
     Integer code;
 
+    // JoinRequest객체를 AccountDto로 변환
     public static AccountDto fromDto(JoinRequest joinRequest){
         return AccountDto.builder()
                 .username(joinRequest.getUsername())

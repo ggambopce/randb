@@ -39,7 +39,7 @@ public class SignUpValidController {
     })
     @PostMapping("/user/join")
     public ResponseEntity<?> join(@Valid @RequestBody JoinRequest joinRequest, BindingResult bindingResult) {
-        boolean validationOfSignUp = signUpservice.
+        signUpService.joinAccount(JoinRequest.fromDto(joinRequest));
     }
 
 }

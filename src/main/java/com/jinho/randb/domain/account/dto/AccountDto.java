@@ -52,7 +52,8 @@ public class AccountDto {
     @JsonIgnore
     private Integer code;
 
-    public Account toEntity(AccountDto accountDto) {
+    // AccountDto객체를 Account로 변환
+    public static Account toEntity(AccountDto accountDto) {  // static으로 클래스 수준에서 호출, 객체생성없이 호출가능
         return Account.builder()
                 .id(accountDto.getId())
                 .loginId(accountDto.getLoginId())
