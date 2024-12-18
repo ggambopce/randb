@@ -43,8 +43,8 @@ public class AccountController {
             @ApiResponse(responseCode = "500", description = "INTERNAL SERVER ERROR",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody AccountDto accountDto){
+    @PostMapping("/join")
+    public ResponseEntity<?> join(@Valid @RequestBody AccountDto accountDto){
 
         try{
             accountService.saveDto(accountDto);

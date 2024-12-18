@@ -37,9 +37,12 @@ public class SignUpValidController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(value = "{\"success\":false,\"message\":\"실패\",\"data\":{\"필드명\" : \"필드 오류 내용\"}}"))),
     })
-    @PostMapping("/user/join")
-    public ResponseEntity<?> join(@Valid @RequestBody JoinRequest joinRequest, BindingResult bindingResult) {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signUp(@Valid @RequestBody JoinRequest joinRequest, BindingResult bindingResult) {
+
         signUpService.joinAccount(JoinRequest.fromDto(joinRequest));
+
+        return ResponseEntity.ok(new ControllerApiResponse<>(true,"회원가입 성공"));
     }
 
 }

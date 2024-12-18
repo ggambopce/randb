@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountDto {
+public class AccountDto { // 내부 로직 사용 객체
 
     @Schema(nullable = true,hidden = true)
     private Long id;
