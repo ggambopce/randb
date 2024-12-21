@@ -30,7 +30,7 @@ public class SignUpServiceImpl implements SignUpService {
     private final EmailService emailService;
 
     // 필드명 상태값 상수로 정의
-    private static final String DUPLICATE_EMAIL = "duplicatrEmail";
+    private static final String DUPLICATE_EMAIL = "duplicateEmail";
     private static final String EMAIL = "email";
     private static final String USE_LOGIN_ID = "useLoginId";
     private static final String PASSWORD_RE = "passwordRe";
@@ -127,7 +127,7 @@ public class SignUpServiceImpl implements SignUpService {
     @Override
     public Map<String, String> ValidationErrorMessage(AccountDto accountDto) {
         Map<String, Boolean> validationResult = validateSignUp(accountDto);
-        Map<String, String> errorMessages = new HashMap<>();
+        Map<String, String> errorMessages = new HashMap<>(); // 단일 키 값 사용
 
         validationResult.forEach((key, value) -> {
             if (!value) {
@@ -157,17 +157,15 @@ public class SignUpServiceImpl implements SignUpService {
      @return 각 검증 항목의 이름과 해당 검증 결과로 이루어진 맵
      */
     private Map<String, Boolean> validateSignUp(AccountDto accountDto) {
-        Map<String, Boolean> validationResult = new LinkedHashMap<>();
-        validationResult.put(IS_LOGIN_VALID,!isLoginIdDuplicated(accountDto.getLoginId()));
-        validationResult.putAll(duplicatePassword(accountDto.getPassword(), accountDto.getPasswordRe()));
-        validationResult.put(DUPLICATE_EMAIL,!isDuplicateEmail(accountDto.getEmail()));
-        validationResult.putAll(emailValid(accountDto.getEmail()));
-        validationResult.putAll(verifyCode(accountDto.getEmail(), accountDto.getCode()));
+        Map<String, Boolean> validationResult = new LinkedHashMap<>(); // 일관된 순서 반환 필요
+        validationResult.put(IS_LOGIN_VALID,!isLoginIdDuplicated(accountDto.getLoginId())); // 아이디 중복검사
+        validationResult.putAll(duplicatePassword(accountDto.getPassword(), accountDto.getPasswordRe())); // 비밀번호 확인
+        validationResult.put(DUPLICATE_EMAIL,!isDuplicateEmail(accountDto.getEmail())); // 이메일 중복 검사
+        validationResult.putAll(emailValid(accountDto.getEmail())); // 이메일 유효성 검사
+        validationResult.putAll(verifyCode(accountDto.getEmail(), accountDto.getCode())); // 이메일 인증번호 검증
 
         return validationResult;
     }
-
-
 
     /**
      * 주어진 회원 정보를 통해 비밀번호 중복여부를 체크하고, 결과를 반환합니다.

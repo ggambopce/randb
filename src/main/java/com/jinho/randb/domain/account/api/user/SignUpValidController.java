@@ -47,14 +47,11 @@ public class SignUpValidController {
     })
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid @RequestBody JoinRequest joinRequest, BindingResult bindingResult) {
+        boolean validationOfSignUp = signUpService.ValidationOfSignUp(JoinRequest.fromDto(joinRequest));
 
-        // 유효성 검증 실패 시 400 Bad Request 반환
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error ->
-                    errors.put(error.getField(), error.getDefaultMessage())
-            );
-            return ResponseEntity.badRequest().body(new ControllerApiResponse<>(false, "입력값오류", errors));
+        if (!validationOfSignUp || bindingResult.hasErrors()){
+            Map<String, String> map = signUpService.ValidationErrorMessage(JoinRequest.fromDto(joinRequest));
+            return getErrorResponseResponse(bindingResult,map);
         }
 
         // 유효성 검증 통과 시 서비스 로직 실행
@@ -74,6 +71,8 @@ public class SignUpValidController {
     })
     @PostMapping("/signup/register/validation")
     public ResponseEntity<ControllerApiResponse> LoginIdValid(@RequestBody LoginIdValidRequest loginIdValidRequest){
+
+
         signUpService.LoginIdValid(loginIdValidRequest.getLoginId());;
         return ResponseEntity.ok(new ControllerApiResponse<>(true,"사용 가능"));
     }

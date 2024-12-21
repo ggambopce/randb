@@ -8,6 +8,7 @@ public interface SignUpService {
     void joinAccount(AccountDto accountDto);
 
     boolean ValidationOfSignUp(AccountDto accountDto);
+
     Map<String, Boolean> LoginIdValid(String loginId);
 
     Map<String, Boolean> emailValid(String email);

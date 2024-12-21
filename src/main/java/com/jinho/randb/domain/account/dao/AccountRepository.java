@@ -9,9 +9,8 @@ import java.util.List;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account,Long>,CustomAccountRepository {
-    Account findByLoginId(String loginId);
 
-    Account findByUsername(String username);
+    Account findByLoginId(String loginId);
 
     long countAllBy();
 
