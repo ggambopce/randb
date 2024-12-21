@@ -4,5 +4,5 @@ import com.jinho.randb.domain.profile.dto.user.UserAddRequest;
 
 public interface ProfileService {
 
-    void save(UserAddRequest userAddRequest);
+    void save(UserAddRequest userAddRequest, Long accountId);
 }

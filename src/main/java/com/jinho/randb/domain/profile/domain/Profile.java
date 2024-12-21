@@ -32,7 +32,7 @@ public class Profile {
     private String bio; // 자기소개
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "acocunt_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "acocunt_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Account account;
 
     @Column(name = "instagram_url")
@@ -44,16 +44,7 @@ public class Profile {
     @Column(name = "youtube_url")
     private String youtubeUrl; // 유튜브 URL
 
-    public void updateProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl) {
-        this.gender = gender;
-        this.age = age;
-        this.bio = bio;
-        this.instagramUrl = instagramUrl;
-        this.blogUrl = blogUrl;
-        this.youtubeUrl = youtubeUrl;
-    }
-
-    public static Profile createProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl ) {
+    public static Profile createProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl) {
         return Profile.builder()
                 .gender(gender)
                 .age(age)
@@ -63,4 +54,15 @@ public class Profile {
                 .youtubeUrl(youtubeUrl)
                 .build();
     }
+
+    public void updateProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl) {
+        this.gender = gender;
+        this.age = age;
+        this.bio = bio;
+        this.instagramUrl = instagramUrl;
+        this.blogUrl = blogUrl;
+        this.youtubeUrl = youtubeUrl;
+    }
+
+
 }
