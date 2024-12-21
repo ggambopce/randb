@@ -4,6 +4,7 @@ import com.jinho.randb.domain.account.domain.Account;
 import io.micrometer.core.annotation.Counted;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile {
@@ -41,4 +43,24 @@ public class Profile {
 
     @Column(name = "youtube_url")
     private String youtubeUrl; // 유튜브 URL
+
+    public void updateProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl) {
+        this.gender = gender;
+        this.age = age;
+        this.bio = bio;
+        this.instagramUrl = instagramUrl;
+        this.blogUrl = blogUrl;
+        this.youtubeUrl = youtubeUrl;
+    }
+
+    public static Profile createProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl ) {
+        return Profile.builder()
+                .gender(gender)
+                .age(age)
+                .bio(bio)
+                .instagramUrl(instagramUrl)
+                .blogUrl(blogUrl)
+                .youtubeUrl(youtubeUrl)
+                .build();
+    }
 }
