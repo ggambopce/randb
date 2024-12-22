@@ -1,4 +1,4 @@
-package com.jinho.randb.domain.profile.dto.user;
+package com.jinho.randb.domain.profile.dto.request;
 
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.profile.domain.Gender;

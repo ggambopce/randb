@@ -2,6 +2,7 @@ package com.jinho.randb.domain.profile.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.jinho.randb.domain.account.dto.AccountDto;
 import com.jinho.randb.domain.profile.domain.Gender;
 import com.jinho.randb.domain.profile.domain.Profile;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,5 +41,21 @@ public class ProfileDto {
     private LocalDate createdAt; // 등록일
 
     private LocalDateTime updatedAt; // 수정일
+
+    private AccountDto account;
+
+
+    public static ProfileDto of(Profile profile) {
+        return ProfileDto.builder()
+                .id(profile.getId())
+                .gender(profile.getGender())
+                .age(profile.getAge())
+                .bio(profile.getBio())
+                .instagramUrl(profile.getInstagramUrl())
+                .blogUrl(profile.getBlogUrl())
+                .youtubeUrl(profile.getYoutubeUrl())
+                .account(AccountDto.of(profile.getAccount()))
+                .build();
+    }
 
 }

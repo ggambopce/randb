@@ -3,6 +3,7 @@ package com.jinho.randb.global.exception.ex.nosuch;
 public enum NoSuchErrorType {
 
     NO_SUCH_ACCOUNT("사용자를 찾을 수 없습니다."),
+    NO_SUCH_PROFILE("해당 프로필을 찾을 수 없습니다."),
     NO_SUCH_POST("토론글을 찾을 수 없습니다."),
     NO_SUCH_IMAGE("이미지 파일을 찾을 수 없습니다."),
     NO_SUCH_EMAIL("해당 이메일을 찾을 수 없습니다."),

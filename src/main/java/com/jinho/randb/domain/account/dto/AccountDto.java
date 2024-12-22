@@ -95,4 +95,18 @@ public class AccountDto { // 내부 로직 사용 객체
         return new AccountDto(accountId, loginId, email, username, nickname, join_date);
     }
 
+    /**
+     * Account 엔티티에서 AccountDto로 변환
+     */
+    public static AccountDto of(Account account) {
+        return AccountDto.builder()
+                .id(account.getId())
+                .loginId(account.getLoginId())
+                .username(account.getUsername())
+                .nickname(account.getNickname())
+                .email(account.getEmail())
+                .build();
+    }
+
+
 }

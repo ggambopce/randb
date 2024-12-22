@@ -4,7 +4,9 @@ import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.profile.dao.ProfileRepository;
 import com.jinho.randb.domain.profile.domain.Profile;
-import com.jinho.randb.domain.profile.dto.user.UserAddRequest;
+import com.jinho.randb.domain.profile.dto.ProfileDto;
+import com.jinho.randb.domain.profile.dto.request.UserAddRequest;
+import com.jinho.randb.domain.profile.dto.response.ProfileDetailResponse;
 import com.jinho.randb.global.exception.ex.nosuch.NoSuchDataException;
 import com.jinho.randb.global.exception.ex.nosuch.NoSuchErrorType;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +33,20 @@ public class ProfileServiceImpl implements ProfileService{
 
         // Account 조회
         Account account = getAccount(accountId);
-
         // DTO -> Entity 변환
         Profile profile = userAddRequest.toEntity(account);
-
         // 프로필 저장
         profileRepository.save(profile);
 
+    }
+
+    /**
+     * 프로필의 상제 정보를 보기위한 로직 해당 로직은 그저 전달체
+     */
+    @Override
+    public ProfileDetailResponse getProfile(Long profileId) {
+        ProfileDto profileDto = profileRepository.profileDetails(profileId);
+        return new ProfileDetailResponse(profileDto);
     }
 
     /* 사용자 정보 조회 메서드*/
