@@ -57,7 +57,7 @@ class SignUpValidControllerTest {
 
     @Test
     @WithMockUser(username = "testUser", roles = {"USER"})
-    @DisplayName("회원가입 API - BingResult_Set")
+    @DisplayName("회원가입 API - 실패")
     void join_Fail() throws Exception {
 
         // Given: nickname 필드를 설정하지 않음

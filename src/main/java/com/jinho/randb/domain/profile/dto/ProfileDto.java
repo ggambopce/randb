@@ -25,21 +25,20 @@ public class ProfileDto {
 
     private Long id;
 
-    private Gender gender;
+    private Gender gender; // 성별
 
-    private LocalDate age;
+    private LocalDate age; // 만 나이
 
-    private String bio;
+    private String bio; // 자기소개
 
-    private String instagramUrl;
+    private String instagramUrl; // 인스타 Url
 
-    private String blogUrl;
+    private String blogUrl; // 블로그 Url
 
-    private String youtubeUrl;
+    private String youtubeUrl; // 유튜브 Url
 
-    private LocalDate createdAt;
+    private LocalDate createdAt; // 등록일
 
-    private LocalDateTime updatedAt;
-
+    private LocalDateTime updatedAt; // 수정일
 
 }
