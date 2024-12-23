@@ -34,9 +34,9 @@ public class ProfileController {
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", profileDetailResponse));
     }
 
-    @PostMapping(value = "/user/update/profiles/{profileId}")
-    public ResponseEntity<?> updateProfile(@Valid @RequestBody UserUpdateRequest userUpdateRequest, @PathVariable("profileId") Long profileId,@AuthenticationPrincipal PrincipalDetails principalDetails) {
-        profileService.update(profileId, principalDetails.getAccountId(), userUpdateRequest);
+    @PostMapping(value = "/user/update/profiles/{profileId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateProfile(@Valid @RequestPart UserUpdateRequest userUpdateRequest, @RequestPart(required = false) MultipartFile multipartFile,  @PathVariable("profileId") Long profileId,@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        profileService.update(profileId, principalDetails.getAccountId(), userUpdateRequest, multipartFile);
         return ResponseEntity.ok(new ControllerApiResponse(true,"수정 성공"));
     }
 

@@ -11,6 +11,6 @@ public interface ProfileService {
 
     ProfileDetailResponse detailProfile(Long profileId);
 
-    void update(Long profileId, Long accountId, UserUpdateRequest userUpdateRequest);
+    void update(Long profileId, Long accountId, UserUpdateRequest userUpdateRequest, MultipartFile multipartFile);
 
 }

@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.jinho.randb.domain.image.domain.UploadFile;
 import com.jinho.randb.global.exception.ex.img.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +35,7 @@ public class S3UploadService {
 
         // 원본 파일명과 저장될 파일명 생성
         String originalFilename = multipartFile.getOriginalFilename();
-        String storeFile = createStoreFile(originalFilename);
+        String storeFilename = createStoreFile(originalFilename);
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
@@ -48,7 +49,22 @@ public class S3UploadService {
             throw new ImageException(UPLOAD_FAILS);
         }
 
-        return amazonS3.getUrl(bucket, originalFilename).toString();
+        return amazonS3.getUrl(bucket, storeFilename).toString();
+    }
+
+    /**
+     * S3 이미지를 수정하는 메서드
+     * AWS S3는 덮어쓰는방식은 지원되지 않으므로 삭제후 재 업로드
+     */
+    public void updateFile(String existingFileName, MultipartFile newFile) {
+
+        // 기존 파일 삭제
+        if (existingFileName != null && !existingFileName.isEmpty()) {
+            deleteFile(existingFileName);
+        }
+
+        // 새로운 파일 업로드
+        uploadFile(newFile);
     }
 
     /**

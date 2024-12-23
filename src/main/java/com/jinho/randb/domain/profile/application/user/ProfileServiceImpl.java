@@ -3,6 +3,7 @@ package com.jinho.randb.domain.profile.application.user;
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
 import com.jinho.randb.domain.image.application.S3UploadService;
+import com.jinho.randb.domain.image.domain.UploadFile;
 import com.jinho.randb.domain.profile.dao.ProfileRepository;
 import com.jinho.randb.domain.profile.domain.Profile;
 import com.jinho.randb.domain.profile.dto.ProfileDto;
@@ -48,12 +49,19 @@ public class ProfileServiceImpl implements ProfileService{
 
     }
 
+
     @Override
-    public void update(Long profileId, Long accountId, UserUpdateRequest userUpdateRequest) {
+    public void update(Long profileId, Long accountId, UserUpdateRequest userUpdateRequest, MultipartFile multipartFile) {
 
         Account account = getAccount(accountId);
         Profile profile = getProfile(profileId);
         validatePostOwner(account, profile);
+
+        // 기존 이미지 파일명 가져오기
+        String existingFileName = profile.getProfileImage().getStoreFileName();
+
+        // 이미지 파일 업로드
+        s3UploadService.updateFile(existingFileName, multipartFile);
 
         profile.updateProfile( // Transactional에서 엔티티의 상태변경으로 수정
                 userUpdateRequest.getGender(),
