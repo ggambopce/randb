@@ -23,7 +23,7 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @PostMapping(value = "/user/profiles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createProfile(@Valid @RequestPart UserAddRequest userAddRequest, @RequestPart MultipartFile multipartFile, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<?> createProfile(@Valid @RequestPart(value = "userAddRequest") UserAddRequest userAddRequest, @RequestPart(value = "multipartFile") MultipartFile multipartFile, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         profileService.save(userAddRequest, principalDetails.getAccountId(), multipartFile);
         return ResponseEntity.ok(new ControllerApiResponse(true,"작성 성공"));
     }

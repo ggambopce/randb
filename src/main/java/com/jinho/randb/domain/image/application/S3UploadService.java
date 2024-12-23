@@ -62,7 +62,6 @@ public class S3UploadService {
         if (existingFileName != null && !existingFileName.isEmpty()) {
             deleteFile(existingFileName);
         }
-
         // 새로운 파일 업로드
         uploadFile(newFile);
     }
