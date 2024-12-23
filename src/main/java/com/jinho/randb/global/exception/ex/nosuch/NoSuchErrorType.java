@@ -13,6 +13,7 @@ public enum NoSuchErrorType {
     NO_SUCH_OPINION("해당 의견을 찾을 수 없습니다."),
     NO_SUCH_NOTIFICATION("해당 알림을 찾을 수 없습니다.");
 
+
     private final String message;
 
     NoSuchErrorType(String message) {
