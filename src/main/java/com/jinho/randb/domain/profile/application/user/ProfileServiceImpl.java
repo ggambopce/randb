@@ -2,6 +2,7 @@ package com.jinho.randb.domain.profile.application.user;
 
 import com.jinho.randb.domain.account.dao.AccountRepository;
 import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.domain.image.application.S3UploadService;
 import com.jinho.randb.domain.profile.dao.ProfileRepository;
 import com.jinho.randb.domain.profile.domain.Profile;
 import com.jinho.randb.domain.profile.dto.ProfileDto;
@@ -14,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Transactional
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class ProfileServiceImpl implements ProfileService{
 
     private final ProfileRepository profileRepository;
     private final AccountRepository accountRepository;
+    private final S3UploadService s3UploadService;
 
     /**
      * 새로운 프로필 생성
@@ -30,12 +35,14 @@ public class ProfileServiceImpl implements ProfileService{
      * @param accountId - 계정 ID
      */
     @Override
-    public void save(UserAddRequest userAddRequest, Long accountId) {
+    public void save(UserAddRequest userAddRequest, Long accountId, MultipartFile multipartFile){
 
         // Account 조회
         Account account = getAccount(accountId);
         // DTO -> Entity 변환
         Profile profile = userAddRequest.toEntity(account);
+        // 이미지 파일 업로드
+        s3UploadService.uploadFile(multipartFile);
         // 프로필 저장
         profileRepository.save(profile);
 

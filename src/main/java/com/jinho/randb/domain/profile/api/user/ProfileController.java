@@ -9,9 +9,11 @@ import com.jinho.randb.global.payload.ControllerApiResponse;
 import com.jinho.randb.global.security.oauth2.details.PrincipalDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,9 +22,9 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-    @PostMapping(value = "/user/profiles")
-    public ResponseEntity<?> createProfile(@Valid @RequestBody UserAddRequest userAddRequest, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        profileService.save(userAddRequest, principalDetails.getAccountId());
+    @PostMapping(value = "/user/profiles", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createProfile(@Valid @RequestPart UserAddRequest userAddRequest, @RequestPart MultipartFile multipartFile, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        profileService.save(userAddRequest, principalDetails.getAccountId(), multipartFile);
         return ResponseEntity.ok(new ControllerApiResponse(true,"작성 성공"));
     }
 

@@ -1,6 +1,7 @@
 package com.jinho.randb.domain.profile.domain;
 
 import com.jinho.randb.domain.account.domain.Account;
+import com.jinho.randb.domain.image.domain.UploadFile;
 import io.micrometer.core.annotation.Counted;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -43,6 +44,9 @@ public class Profile {
 
     @Column(name = "youtube_url")
     private String youtubeUrl; // 유튜브 URL
+
+    @OneToOne(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UploadFile profileImage;
 
     public static Profile createProfile(Gender gender, LocalDate age, String bio, String instagramUrl, String blogUrl, String youtubeUrl) {
         return Profile.builder()

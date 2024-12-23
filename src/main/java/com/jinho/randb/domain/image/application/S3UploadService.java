@@ -1,7 +1,10 @@
 package com.jinho.randb.domain.image.application;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.jinho.randb.global.exception.ex.img.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.jinho.randb.global.exception.ex.img.ImageErrorType.INVALID_IMAGE_FORMAT;
+import static com.jinho.randb.global.exception.ex.img.ImageErrorType.UPLOAD_FAILS;
 
 @Service
 @Transactional
@@ -25,7 +30,7 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String saveFile(MultipartFile multipartFile) throws IOException {
+    public String uploadFile(MultipartFile multipartFile){
 
         // 원본 파일명과 저장될 파일명 생성
         String originalFilename = multipartFile.getOriginalFilename();
@@ -35,8 +40,27 @@ public class S3UploadService {
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
-        amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+        // 파일을 S3에 업로드
+        try{
+            amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
+        }catch (IOException e) {
+            e.printStackTrace();
+            throw new ImageException(UPLOAD_FAILS);
+        }
+
         return amazonS3.getUrl(bucket, originalFilename).toString();
+    }
+
+    /**
+     * S3 이미지를 삭제하는 메서드
+     * 저장된 파일명을 사용해 S3 버킷에서 해당 이미지를 삭제
+     */
+    public void deleteFile(String uploadFileName){
+        try{
+            amazonS3.deleteObject(bucket, uploadFileName);
+        }catch (SdkClientException e){
+            throw new ImageException(UPLOAD_FAILS);
+        }
     }
 
     /* 저장될 파일명 생성 */
