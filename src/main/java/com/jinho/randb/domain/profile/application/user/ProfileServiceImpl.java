@@ -57,6 +57,7 @@ public class ProfileServiceImpl implements ProfileService{
                 userUpdateRequest.getYoutubeUrl());
     }
 
+
     /**
      * 프로필의 상제 정보를 보기위한 로직 해당 로직은 그저 전달체
      */

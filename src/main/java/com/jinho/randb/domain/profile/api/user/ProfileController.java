@@ -32,7 +32,7 @@ public class ProfileController {
         return ResponseEntity.ok(new ControllerApiResponse<>(true, "조회성공", profileDetailResponse));
     }
 
-    @PostMapping(value = "/user/update/profiles/{profileId")
+    @PostMapping(value = "/user/update/profiles/{profileId}")
     public ResponseEntity<?> updateProfile(@Valid @RequestBody UserUpdateRequest userUpdateRequest, @PathVariable("profileId") Long profileId,@AuthenticationPrincipal PrincipalDetails principalDetails) {
         profileService.update(profileId, principalDetails.getAccountId(), userUpdateRequest);
         return ResponseEntity.ok(new ControllerApiResponse(true,"수정 성공"));

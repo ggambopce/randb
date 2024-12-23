@@ -8,7 +8,8 @@ public interface ProfileService {
 
     void save(UserAddRequest userAddRequest, Long accountId);
 
+    ProfileDetailResponse detailProfile(Long profileId);
+
     void update(Long profileId, Long accountId, UserUpdateRequest userUpdateRequest);
 
-    ProfileDetailResponse detailProfile(Long profileId);
 }
