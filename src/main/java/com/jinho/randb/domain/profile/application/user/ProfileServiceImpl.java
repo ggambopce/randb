@@ -6,6 +6,7 @@ import com.jinho.randb.domain.profile.dao.ProfileRepository;
 import com.jinho.randb.domain.profile.domain.Profile;
 import com.jinho.randb.domain.profile.dto.ProfileDto;
 import com.jinho.randb.domain.profile.dto.request.UserAddRequest;
+import com.jinho.randb.domain.profile.dto.request.UserUpdateRequest;
 import com.jinho.randb.domain.profile.dto.response.ProfileDetailResponse;
 import com.jinho.randb.global.exception.ex.nosuch.NoSuchDataException;
 import com.jinho.randb.global.exception.ex.nosuch.NoSuchErrorType;
@@ -40,17 +41,45 @@ public class ProfileServiceImpl implements ProfileService{
 
     }
 
+    @Override
+    public void update(Long profileId, Long accountId, UserUpdateRequest userUpdateRequest) {
+
+        Account account = getAccount(accountId);
+        Profile profile = getProfile(profileId);
+        validatePostOwner(account, profile);
+
+        profile.updateProfile( // Transactional에서 엔티티의 상태변경으로 수정
+                userUpdateRequest.getGender(),
+                userUpdateRequest.getAge(),
+                userUpdateRequest.getBio(),
+                userUpdateRequest.getInstagramUrl(),
+                userUpdateRequest.getBlogUrl(),
+                userUpdateRequest.getYoutubeUrl());
+    }
+
     /**
      * 프로필의 상제 정보를 보기위한 로직 해당 로직은 그저 전달체
      */
     @Override
-    public ProfileDetailResponse getProfile(Long profileId) {
+    public ProfileDetailResponse detailProfile(Long profileId) {
         ProfileDto profileDto = profileRepository.profileDetails(profileId);
         return new ProfileDetailResponse(profileDto);
     }
 
+
     /* 사용자 정보 조회 메서드*/
     private Account getAccount(Long accountId) {
         return accountRepository.findById(accountId).orElseThrow(() -> new NoSuchDataException(NoSuchErrorType.NO_SUCH_ACCOUNT));
+    }
+
+    /*프로필 조회 메서드*/
+    private Profile getProfile(Long profileId) {
+        return profileRepository.findById(profileId).orElseThrow(() -> new NoSuchDataException(NoSuchErrorType.NO_SUCH_POST));
+    }
+
+    /* 작성자 및 관리자인지 검증 메서드*/
+    private static void validatePostOwner(Account account, Profile profile) {
+        if(!profile.getAccount().getLoginId().equals(account.getLoginId()) && !account.getRoles().equals("ROLE_ADMIN"))
+            throw new IllegalArgumentException("작성자만 이용 가능합니다.");
     }
 }
