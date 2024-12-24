@@ -28,4 +28,21 @@ public class UploadFile {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Profile profile;
+
+    public UploadFile(String originFileName, String storeFileName) {
+        this.originFileName = originFileName;
+        this.storeFileName = storeFileName;
+    }
+
+    public void update(String originFileName, String storeFileName) {
+        this.originFileName = originFileName;
+        this.storeFileName = storeFileName;
+    }
+
+    public static UploadFile createUploadFile(String originFileName, String storeFileName) {
+        return UploadFile.builder()
+                .originFileName(originFileName)
+                .storeFileName(storeFileName)
+                .build();
+    }
 }

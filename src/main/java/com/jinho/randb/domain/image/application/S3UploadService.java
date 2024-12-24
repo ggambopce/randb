@@ -5,7 +5,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.jinho.randb.domain.image.dao.ImgRepository;
 import com.jinho.randb.domain.image.domain.UploadFile;
+import com.jinho.randb.domain.profile.dao.ProfileRepository;
+import com.jinho.randb.domain.profile.domain.Profile;
 import com.jinho.randb.global.exception.ex.img.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,20 +30,29 @@ import static com.jinho.randb.global.exception.ex.img.ImageErrorType.UPLOAD_FAIL
 public class S3UploadService {
 
     private final AmazonS3 amazonS3;
+    private final ImgRepository imgRepository;
+    private final ProfileRepository profileRepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String uploadFile(MultipartFile multipartFile){
+    public String uploadFile(MultipartFile multipartFile, Profile profile){
 
         // 원본 파일명과 저장될 파일명 생성
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFilename = createStoreFile(originalFilename);
 
+        // 객체 메타데이터 설정
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(multipartFile.getSize());
         metadata.setContentType(multipartFile.getContentType());
 
+        // UploadFile 엔티티 생성 및 Profile과 연관 설정
+        UploadFile uploadFile = UploadFile.createUploadFile(originalFilename, storeFilename);
+        uploadFile.setProfile(profile); // Profile과 연관 설정
+
+        // UploadFile 저장
+        imgRepository.save(uploadFile);
         // 파일을 S3에 업로드
         try{
             amazonS3.putObject(bucket, originalFilename, multipartFile.getInputStream(), metadata);
@@ -55,15 +67,51 @@ public class S3UploadService {
     /**
      * S3 이미지를 수정하는 메서드
      * AWS S3는 덮어쓰는방식은 지원되지 않으므로 삭제후 재 업로드
+     * 연관관계 및 이름 재설정
      */
-    public void updateFile(String existingFileName, MultipartFile newFile) {
+    public void updateFile(String existingFileName, MultipartFile newFile, Profile profile) {
 
         // 기존 파일 삭제
         if (existingFileName != null && !existingFileName.isEmpty()) {
             deleteFile(existingFileName);
         }
         // 새로운 파일 업로드
-        uploadFile(newFile);
+        String newFileUrl = uploadFile(newFile, profile);
+
+        // Profile에서 연관된 UploadFile 가져오기
+        UploadFile uploadFile = profile.getProfileImage();
+        if (uploadFile == null) {
+            // 연관된 파일이 없는 경우 새로 생성
+            uploadFile = UploadFile.createUploadFile(newFile.getOriginalFilename(), newFileUrl);
+            uploadFile.setProfile(profile);
+        } else {
+            // 기존 파일 업데이트
+            uploadFile.update(newFile.getOriginalFilename(), newFileUrl);
+        }
+
+        imgRepository.save(uploadFile);
+
+    }
+    /**
+     * 프로필 이미지 삭제 메서드
+     * @param profile 프로필 객체
+     */
+    public void deleteProfileImage(Long profileId) {
+        // 프로필 조회
+        Profile profile = profileRepository.findById(profileId)
+                .orElseThrow(() -> new IllegalArgumentException("프로필이 존재하지 않습니다."));
+        // 프로필에 연관된 파일 가져오기
+        UploadFile uploadFile = profile.getProfileImage();
+
+        // S3에서 파일 삭제
+        if (uploadFile != null) {
+            String storeFileName = uploadFile.getStoreFileName();
+            deleteFile(storeFileName);
+
+            // 데이터베이스에서 연관 정보 삭제
+            profile.setProfileImage(null); // 프로필과의 연관관계 제거
+            imgRepository.delete(uploadFile); // UploadFile 엔티티 삭제
+        }
     }
 
     /**

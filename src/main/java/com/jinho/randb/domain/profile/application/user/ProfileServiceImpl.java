@@ -43,7 +43,7 @@ public class ProfileServiceImpl implements ProfileService{
         // DTO -> Entity 변환
         Profile profile = userAddRequest.toEntity(account);
         // 이미지 파일 업로드
-        s3UploadService.uploadFile(multipartFile);
+        s3UploadService.uploadFile(multipartFile, profile);
         // 프로필 저장
         profileRepository.save(profile);
 
@@ -61,7 +61,7 @@ public class ProfileServiceImpl implements ProfileService{
         String existingFileName = profile.getProfileImage().getStoreFileName();
 
         // 이미지 파일 업로드
-        s3UploadService.updateFile(existingFileName, multipartFile);
+        s3UploadService.updateFile(existingFileName, multipartFile, profile);
 
         profile.updateProfile( // Transactional에서 엔티티의 상태변경으로 수정
                 userUpdateRequest.getGender(),
